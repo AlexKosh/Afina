@@ -1,0 +1,19 @@
+﻿<div>
+    <div class="row">
+        <h1>main directive</h1>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <h3>Открыть файл</h3>
+            <input type="file" id="fileOpener" ng-model="vm.file" />
+            <button class="btn btn-default" ng-click="vm.tryParseFile()">Check</button>
+        </div>
+        <div class="col-lg-9">
+            <ol>
+                <li ng-repeat="rd in vm.exportData">
+                    {{rd}}
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>

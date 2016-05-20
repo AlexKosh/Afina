@@ -1,0 +1,28 @@
+﻿<div ng-controller="ModelController as vm">
+    <div class="row">
+        <h1>model directive</h1>
+    </div>
+    <div class="row">
+        <div id="leftCanvasHolder" class="col-lg-6">
+
+        </div>
+        <div id="rightCanvasHolder" class="col-lg-offset-1 col-lg-5">
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <h3>Выбрать данные:</h3>
+            <button class="btn btn-default" ng-click="vm.chooseChangedData()">changed</button>
+            <button class="btn btn-default" ng-click="vm.chooseDefaultData()">default</button>
+            <button class="btn btn-warning" ng-click="vm.clearCanva()">clear</button>
+            <button class="btn btn-success" ng-disabled="vm.exportData == false" ng-click="vm.chooseExportData()">export</button>
+        </div>
+        <div class="col-lg-8">
+            <h3>vm.data.labels:</h3>
+            <p>{{vm.data.labels}}</p>
+            <h3>vm.data.datasets.data:</h3>
+            <p ng-repeat="ds in vm.data.datasets">{{ds.data}}</p>
+        </div>
+    </div>    
+</div>
