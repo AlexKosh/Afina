@@ -1,7 +1,7 @@
 
-    angular.module('Afina', ['angular-meteor', 'ui.router']);
+angular.module('Afina', ['angular-meteor', 'ui.router']);
     
-    //Afina RouteConfig
+//Afina RouteConfig
 angular.module('Afina').config(function ($urlRouterProvider, $stateProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
  
@@ -18,26 +18,26 @@ angular.module('Afina').config(function ($urlRouterProvider, $stateProvider, $lo
     $urlRouterProvider.otherwise("/");
   });
   
-  angular.module('Afina').directive('mainPage', function(){
+angular.module('Afina').directive('mainPage', function(){
       return {
           restrict: 'EA',
           templateUrl: 'client/partials/main.html'
       }
   });
   
-    angular.module('Afina').directive('modelPage', function(){
+angular.module('Afina').directive('modelPage', function(){
       return {
           restrict: 'EA',
           templateUrl: 'client/partials/model.html'
       }
   });
     
-    //Afina MainController
-    angular.module('Afina')
+//Afina MainController
+angular.module('Afina')
     .controller('MainController', MainController);
 
-    MainController.$inject = ['$scope'];
-    function MainController($scope) {
+MainController.$inject = ['$scope'];
+function MainController($scope) {
         //view model
         var vm = this;
         console.log('initialized main ctrl');
@@ -148,12 +148,12 @@ angular.module('Afina').config(function ($urlRouterProvider, $stateProvider, $lo
 
     }
     
-    //Afina ModelController
-    angular.module('Afina')
-        .controller('ModelController', ModelController);
+//Afina ModelController
+angular.module('Afina')
+    .controller('ModelController', ModelController);
 
-    ModelController.$inject = ['$scope'];
-    function ModelController($scope) {
+ModelController.$inject = ['$scope'];
+function ModelController($scope) {
         var vm = this;
         console.log('initialized model ctrl');
         

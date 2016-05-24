@@ -1,19 +1,69 @@
-﻿<div>
-    <div class="row">
-        <h1>main directive</h1>
-    </div>
-    <div class="row">
-        <div class="col-lg-3">
-            <h3>Открыть файл</h3>
-            <input type="file" id="fileOpener" ng-model="vm.file" />
-            <button class="btn btn-default" ng-click="vm.tryParseFile()">Check</button>
+﻿<div class="row">
+    <div class="col-md-6">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Page title <small>Page subtile </small></h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Settings 1</a></li>
+                            <li><a href="#">Settings 2</a></li>
+                        </ul>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a></li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <!-- content starts here -->
+                <div>
+                    <div>
+                        <h1>main directive</h1>
+                    </div>
+                    <div>
+                        <div>
+                            <h3>Открыть файл</h3>
+                            <input type="file" id="fileOpener" ng-model="vm.file" />
+                            <button class="btn btn-default" ng-click="vm.tryParseFile()">Check</button>
+                        </div>                        
+                    </div>
+                </div>
+                <!-- content ends here -->
+            </div>
         </div>
-        <div class="col-lg-9">
-            <ol>
-                <li ng-repeat="rd in vm.exportData">
-                    {{rd}}
-                </li>
-            </ol>
+    </div>
+    <div class="col-md-6">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Page title <small>Page subtile </small></h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Settings 1</a></li>
+                            <li><a href="#">Settings 2</a></li>
+                        </ul>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a></li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <!-- content starts here -->
+                <ol>
+                    <li ng-repeat="rd in vm.exportData">
+                        {{rd}}
+                    </li>
+                </ol>
+                <!-- content ends here -->
+            </div>
         </div>
     </div>
 </div>
