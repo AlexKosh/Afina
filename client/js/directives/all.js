@@ -1,0 +1,17 @@
+(function(){
+angular.module('Afina').directive('mainPage', function(){
+      return {
+          restrict: 'EA',
+          templateUrl: 'client/partials/main.html'
+      }
+  });
+  
+angular.module('Afina').directive('modelPage', function(){
+      return {
+          restrict: 'EA',
+          templateUrl: 'client/partials/model.html'
+      }
+  });
+    
+})();
+

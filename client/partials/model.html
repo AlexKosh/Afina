@@ -1,119 +1,153 @@
-﻿<div ng-controller="ModelController as vm" class="row">
-    <div class="col-md-6">
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Page title <small>Page subtile </small></h2>
-                <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Settings 1</a></li>
-                            <li><a href="#">Settings 2</a></li>
-                        </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a></li>
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-                <!-- content starts here -->
-                <div id="leftCanvasHolder">
+﻿<div ng-controller="ModelController as vm">
 
+    <div class="row">
+        <div class="col-md-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Общие продажи за время</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">Settings 1</a></li>
+                                <li><a href="#">Settings 2</a></li>
+                            </ul>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a></li>
+                    </ul>
+                    <div class="clearfix"></div>
                 </div>
-                <!-- content ends here -->
-            </div>
-        </div>
+                <div class="x_content">
+                    <!-- content starts here -->                     
+                    <div id="genQuanCH">
 
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Page title <small>Page subtile </small></h2>
-                <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Settings 1</a></li>
-                            <li><a href="#">Settings 2</a></li>
-                        </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a></li>
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-                <!-- content starts here -->
-                <div id="rightCanvasHolder">
-
+                    </div>
+                    <!-- content ends here -->
                 </div>
-                <!-- content ends here -->
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Page title <small>Page subtile </small></h2>
-                <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Settings 1</a></li>
-                            <li><a href="#">Settings 2</a></li>
-                        </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a></li>
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-                <!-- content starts here -->
-                <div>
-                    <h3>Выбрать данные:</h3>
-                    <button class="btn btn-default" ng-click="vm.chooseChangedData()">changed</button>
-                    <button class="btn btn-default" ng-click="vm.chooseDefaultData()">default</button>
-                    <button class="btn btn-warning" ng-click="vm.clearCanva()">clear</button>
-                    <button class="btn btn-success" ng-disabled="vm.exportData == false" ng-click="vm.chooseExportData()">export</button>
-                </div>
-                <!-- content ends here -->
-            </div>
-        </div>
 
-        <div class="x_panel">
-            <div class="x_title">
-                <h2>Page title <small>Page subtile </small></h2>
-                <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Settings 1</a></li>
-                            <li><a href="#">Settings 2</a></li>
-                        </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a></li>
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-                <!-- content starts here -->
-                <div>
-                    <h3>vm.data.labels:</h3>
-                    <p>{{vm.data.labels}}</p>
-                    <h3>vm.data.datasets.data:</h3>
-                    <p ng-repeat="ds in vm.data.datasets">{{ds.data}}</p>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Page title <small>Page subtile </small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">Settings 1</a></li>
+                                <li><a href="#">Settings 2</a></li>
+                            </ul>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a></li>
+                    </ul>
+                    <div class="clearfix"></div>
                 </div>
-                <!-- content ends here -->
+                <div class="x_content">
+                    <!-- content starts here -->
+                    <div id="leftCanvasHolder">
+
+                    </div>
+                    <!-- content ends here -->
+                </div>
+            </div>
+
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Page title <small>Page subtile </small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">Settings 1</a></li>
+                                <li><a href="#">Settings 2</a></li>
+                            </ul>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a></li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <!-- content starts here -->
+                    <div id="rightCanvasHolder">
+
+                    </div>
+                    <!-- content ends here -->
+                </div>
             </div>
         </div>
-    </div>       
+        <div class="col-md-6">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Page title <small>Page subtile </small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">Settings 1</a></li>
+                                <li><a href="#">Settings 2</a></li>
+                            </ul>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a></li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <!-- content starts here -->
+                    <div>
+                        <h3>Выбрать данные:</h3>
+                        <button class="btn btn-default" ng-click="vm.chooseChangedData()">changed</button>
+                        <button class="btn btn-default" ng-click="vm.chooseDefaultData()">default</button>
+                        <button class="btn btn-warning" ng-click="vm.clearCanva()">clear</button>
+                        <button class="btn btn-success" ng-disabled="vm.dataByDate == false" ng-click="vm.chooseDataByDate()">Data by Date</button>
+                    </div>
+                    <!-- content ends here -->
+                </div>
+            </div>
+
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Page title <small>Page subtile </small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">Settings 1</a></li>
+                                <li><a href="#">Settings 2</a></li>
+                            </ul>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a></li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <!-- content starts here -->
+                    <div>
+                        <h3>vm.data.labels:</h3>
+                        <p>{{vm.data.labels}}</p>
+                        <h3>vm.data.datasets.data:</h3>
+                        <p ng-repeat="ds in vm.data.datasets">{{ds.data}}</p>
+                    </div>
+                    <!-- content ends here -->
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
