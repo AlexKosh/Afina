@@ -9,18 +9,17 @@ function MainController($scope){
     //view model
     var vm = this;
     console.log('initialized main ctrl');
-
-
+        
     //после удачного парсинга файла и последующей удачной обработки, данные помещаются сюда, а пока это false
     vm.exportData = false;
     //массив $scope.data обрабатывается и данные о продажах группируются по дням и сохраняются в эту переменную
-    vm.dataByDate = false;
-    //массив vm.sDataByDate заполняется массивами данных по месяцам, которые заполняются данными по каждому дню, даже в случае отсутствия продаж в этот день
-    vm.sDataByDate = false;
+    vm.dataByDate = false;    
     $scope.data = false;
+    //массив массивов: [0] - заполняется данными об общих продажах за время, [1] и дальше по каждой модели за время. {Date: x, Quantity: y, Name: z} 
     $scope.dataByDate = false;
-    $scope.sDataByDate = false;
 
+    $scope.modelNames = false;
+    
     //сюда помещаются данные из csv файла сразу после парсинга в виде массивов
     vm.roughData = null;
     /*метод принимает файл выбранный в input[id="fileOpener"], файл должен быть только по шаблону от TradeGecko Exporter
@@ -37,6 +36,7 @@ function MainController($scope){
                     console.log('file have been parsed');
 
                     selectTargetColumns();
+                    $scope.modelNames = distinctModels();
                     //в csv файле по шаблону TradeGecko Exportera больше 20 колонок, эта функция отделяет зерна от плевел
                     function selectTargetColumns() {
                         //массив нужных названий колонок, в дальнейшем этот массив сопоставляется с названием каждой колонки в файле
@@ -141,12 +141,9 @@ function MainController($scope){
         endDate.setHours(12);
         var tempDate = new Date(arr[arr.length - 1].Date);               
         tempDate.setHours(12);
+        
+        var modelsName = $scope.modelNames;
 
-        console.log(1);
-
-        var modelsName = distinctModels();
-
-        console.log(modelsName);
         
         //создаем массивы заполненные датами от первой даты продаж до последней в arr[]
         //[0] - сумма продаж по всем моделям, [1],[2],[3]... - сумма продаж по каждой из моделей в отдельности
@@ -166,14 +163,11 @@ function MainController($scope){
             
         }        
         
-        console.log(2);
         for (var i = 0; i < arr.length; i++) {
             addDateToResultArr(arr[i]);
             count += arr[i].Quantity;
         }
-        console.log(3);
         makeShortDate();
-        console.log(4);
         vm.dataByDate = result;
         $scope.dataByDate = result;
         console.log(count);
@@ -260,28 +254,31 @@ function MainController($scope){
                 
             }
         }
-        function distinctModels() {
+        
+    }
+    function distinctModels() {
 
-            var res = [];
-            res.push(arr[0].Name);            
+        var arr = $scope.data;
+        var res = [];
+        res.push(arr[0].Name);
 
-            for (var i = 0; i < arr.length; i++) {                
+        for (var i = 0; i < arr.length; i++) {
 
-                for (var j = 0; j < res.length; j++) {
-                    
-                    if (res[j] == arr[i].Name) {
-                        break;
-                    }
-                    
-                    if (j == res.length - 1) {
-                        res.push(arr[i].Name);
-                        break;
-                    }
+            for (var j = 0; j < res.length; j++) {
+
+                if (res[j] == arr[i].Name) {
+                    break;
                 }
-                
+
+                if (j == res.length - 1) {
+                    res.push(arr[i].Name);
+                    break;
+                }
             }
-            return res;
+
         }
-    }    
+        $scope.modelNames = res;
+        return res;
+    }
 }
 })();

@@ -11,7 +11,14 @@ angular.module('Afina').directive('modelPage', function(){
           restrict: 'EA',
           templateUrl: 'client/partials/model.html'
       }
-  });
+});
+
+angular.module('Afina').directive('sizesPage', function () {
+    return {
+        restrict: 'EA',
+        templateUrl: 'client/partials/sizes.html'
+    }
+});
     
 })();
 

@@ -33,6 +33,7 @@ function ModelController($scope) {
             document.getElementById("leftChart").remove();
             document.getElementById("rightChart").remove();
             document.getElementById("genQuanChart").remove();
+            document.getElementById("genQuanByModelsChart").remove();
 
             initCanva();
         };
@@ -78,8 +79,8 @@ function ModelController($scope) {
                 labels.push(vm.dataByDate[0][i].Date);
                 datasetsData.push(vm.dataByDate[0][i].Quantity);
             }
-            //console.log(datasetsData);
 
+            //заполняет dataset для графика общих продаж
             vm.data = {
                 labels: labels,
                 datasets: [
@@ -95,6 +96,7 @@ function ModelController($scope) {
                     }]
             };
 
+            //заполняет datasets для графиков моделей
             datasetsData = [[]];
             for (var m = 1; m < vm.dataByDate.length; m++) {
                 for (var i = 0; i < vm.dataByDate[m].length; i++) {
@@ -106,23 +108,20 @@ function ModelController($scope) {
             }
             
             vm.dataByModels = { labels: labels, datasets: [] };
-
-            console.log(vm.dataByDate);
-            console.log(datasetsData);
             for (var l = 0; l < vm.dataByDate.length - 1; l++) {
                 vm.dataByModels.datasets.push({
-                    label: "My dataset " + l,
-                    fillColor: "rgba(" + (20 + 40 * l) + ","+ (80 + 20 * l) +"," + (120 + 2 * l) + ",0.2)",
-                    strokeColor: "rgba(" + (20 + 40 * l) + "," + (80 + 20 * l) + "," + (120 + 2 * l) + ",1)",
-                    pointColor: "rgba(" + (20 + 40 * l) + "," + (80 + 20 * l) + "," + (120 + 2 * l) + ",1)",
+                    label: datasetsData[l][0].Name,
+                    fillColor: "rgba(" + (20 + 30 * l) + ","+ (180 - 20 * l) +"," + (120 + 2 * l) + ",0.2)",
+                    strokeColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
+                    pointColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
                     pointStrokeColor: "#fff",
                     pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(" + (20 + 40 * l) + "," + (80 + 20 * l) + "," + (120 + 2 * l) + ",1)",
+                    pointHighlightStroke: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
                     data: datasetsData[l]
                 });
             }
 
-            console.log(vm.dataByModels);
+
             clearCanva();
             leftChart = new Chart(leftCtx).Line(vm.data);
             rightChart = new Chart(rightCtx).Line(vm.data);
@@ -163,6 +162,9 @@ function ModelController($scope) {
         function init() {
             initCanva();
             checkDataByDate();
+            if (vm.dataByDate != false) {
+                chooseDataByDate();
+            }
         };
         //функция создают canvas для двух графиков на странице: левого и правого и задает им ширину/высоту как у родительского эл-та
         function initCanva() {

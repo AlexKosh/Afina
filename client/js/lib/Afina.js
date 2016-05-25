@@ -7,13 +7,17 @@ angular.module('Afina').config(function ($urlRouterProvider, $stateProvider, $lo
  
     $stateProvider
       .state('main', {
-        url: '/main',
-        template: '<main-page></main-page>'
+          url: '/main',
+          template: '<main-page></main-page>'
       })
       .state('model', {
           url: '/model',
           template: '<model-page></model-page>'
-      });
+      })
+    .state('sizes', {
+        url: '/sizes',
+        template: '<sizes-page></sizes-page>'
+    });
  
     $urlRouterProvider.otherwise("/");
 });
