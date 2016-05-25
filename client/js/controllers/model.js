@@ -18,6 +18,8 @@ function ModelController($scope) {
         var rightChart = {};
         var genQuanCtx = {};
         var genQuanChart = {};
+        var genQuanByModelsCtx = {};
+        var genQuanByModelsChart = {};
 
         
         vm.chooseChangedData = chooseChangedData;
@@ -72,9 +74,9 @@ function ModelController($scope) {
         function chooseDataByDate() {
             var labels = [];
             var datasetsData = [];
-            for (var i = 0; i < vm.dataByDate.length; i++) {
-                labels.push(vm.dataByDate[i].Date);
-                datasetsData.push(vm.dataByDate[i].Quantity);
+            for (var i = 0; i < vm.dataByDate[0].length; i++) {
+                labels.push(vm.dataByDate[0][i].Date);
+                datasetsData.push(vm.dataByDate[0][i].Quantity);
             }
             //console.log(datasetsData);
 
@@ -91,12 +93,41 @@ function ModelController($scope) {
                         pointHighlightStroke: "rgba(220,120,120,1)",
                         data: datasetsData
                     }]
+            };
+
+            datasetsData = [[]];
+            for (var m = 1; m < vm.dataByDate.length; m++) {
+                for (var i = 0; i < vm.dataByDate[m].length; i++) {
+                    datasetsData[m - 1].push(vm.dataByDate[m][i].Quantity);
+                }
+                if (m != vm.dataByDate.length - 1) {
+                    datasetsData.push([]);
+                }
+            }
+            
+            vm.dataByModels = { labels: labels, datasets: [] };
+
+            console.log(vm.dataByDate);
+            console.log(datasetsData);
+            for (var l = 0; l < vm.dataByDate.length - 1; l++) {
+                vm.dataByModels.datasets.push({
+                    label: "My dataset " + l,
+                    fillColor: "rgba(" + (20 + 40 * l) + ","+ (80 + 20 * l) +"," + (120 + 2 * l) + ",0.2)",
+                    strokeColor: "rgba(" + (20 + 40 * l) + "," + (80 + 20 * l) + "," + (120 + 2 * l) + ",1)",
+                    pointColor: "rgba(" + (20 + 40 * l) + "," + (80 + 20 * l) + "," + (120 + 2 * l) + ",1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(" + (20 + 40 * l) + "," + (80 + 20 * l) + "," + (120 + 2 * l) + ",1)",
+                    data: datasetsData[l]
+                });
             }
 
+            console.log(vm.dataByModels);
             clearCanva();
             leftChart = new Chart(leftCtx).Line(vm.data);
             rightChart = new Chart(rightCtx).Line(vm.data);
             genQuanChart = new Chart(genQuanCtx).Line(vm.data);
+            genQuanByModelsChart = new Chart(genQuanByModelsCtx).Line(vm.dataByModels);
         };
         function chooseDefaultData() {
             vm.data = {
@@ -138,6 +169,7 @@ function ModelController($scope) {
             document.getElementById("leftCanvasHolder").innerHTML = '<canvas id="leftChart"></canvas>';
             document.getElementById("rightCanvasHolder").innerHTML = '<canvas id="rightChart"></canvas>';
             document.getElementById("genQuanCH").innerHTML = '<canvas id="genQuanChart"></canvas>';
+            document.getElementById("genQuanByModelsCH").innerHTML = '<canvas id="genQuanByModelsChart"></canvas>';
             leftCtx = document.getElementById("leftChart").getContext("2d");
             leftCtx.canvas.width = document.getElementById("leftCanvasHolder").clientWidth;
             leftCtx.canvas.height = document.getElementById("leftCanvasHolder").clientHeight;
@@ -146,8 +178,13 @@ function ModelController($scope) {
             rightCtx.canvas.height = document.getElementById("rightCanvasHolder").clientHeight;
             genQuanCtx = document.getElementById("genQuanChart").getContext("2d");
             genQuanCtx.canvas.width = document.getElementById("genQuanCH").clientWidth;
-            //magic number: 267
-            genQuanCtx.canvas.height = 267;
+            //magic number: 287
+            genQuanCtx.canvas.height = 287;
+            genQuanByModelsCtx = document.getElementById("genQuanByModelsChart").getContext("2d");
+            genQuanByModelsCtx.canvas.width = document.getElementById("genQuanByModelsCH").clientWidth;
+            //magic number: 287
+            genQuanByModelsCtx.canvas.height = 287;
+
         };
     }
 })();

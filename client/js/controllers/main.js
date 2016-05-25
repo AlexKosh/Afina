@@ -90,7 +90,7 @@ function MainController($scope){
                                 newObject.Name = tempObject[targetColumns[1]];
                                 newObject.SKU = tempObject[targetColumns[0]];
                                 newObject.Quantity = parseInt(tempObject[targetColumns[3]]);
-                                newObject.Date = tempObject[targetColumns[4]];
+                                newObject.Date = new Date(tempObject[targetColumns[4]]).setHours(12);
 
                                 function getColorAndSize() {
                                     var colorDashSize = tempObject[targetColumns[2]];
@@ -130,8 +130,9 @@ function MainController($scope){
             return
         }
         
+        
         var arr = $scope.data;
-        var result = [];
+        var result = [[]];
         var count = arr[0].Quantity;
         
         var startDate = new Date(arr[arr.length - 1].Date);
@@ -143,11 +144,27 @@ function MainController($scope){
 
         console.log(1);
 
-        result.push({ Date: tempDate, Quantity: 0 });
-        do {
-            tempDate = addDays(tempDate);
-            result.push({ Date: tempDate, Quantity: 0 });
-        } while (!compareDate(tempDate, endDate));
+        var modelsName = distinctModels();
+
+        console.log(modelsName);
+        
+        //создаем массивы заполненные датами от первой даты продаж до последней в arr[]
+        //[0] - сумма продаж по всем моделям, [1],[2],[3]... - сумма продаж по каждой из моделей в отдельности
+        for (var k = 0; k < modelsName.length + 1; k++) {
+            result[k].push({ Date: tempDate, Quantity: 0, Name: modelsName[k - 1] || '' });
+
+            do {
+                tempDate = addDays(tempDate);
+                result[k].push({ Date: tempDate, Quantity: 0, Name: modelsName[k - 1] || '' });
+            } while (!compareDate(tempDate, endDate));
+
+            if (modelsName.length != k) {
+                tempDate = new Date(arr[arr.length - 1].Date);
+                tempDate.setHours(12);
+                result.push([]);
+            }
+            
+        }        
         
         console.log(2);
         for (var i = 0; i < arr.length; i++) {
@@ -164,17 +181,41 @@ function MainController($scope){
         function addDateToResultArr(obj) {
             var tempDate = new Date(obj.Date);
             
-            for (var j = 0; j < result.length; j++) {
+            for (var j = 0; j < result[0].length; j++) {
+                                
+                //заполняем result[0] - массив с суммой всех продаж по времени
+                if (compareDate(tempDate, result[0][j].Date)) {
+                    result[0][j].Quantity += obj.Quantity;
 
-                if (compareDate(tempDate, result[j].Date)) {
-                    result[j].Quantity += obj.Quantity;
+                    //заполняем result[1...] массивы с продажами по моделям по времени
+                    for (var k = 1; k < modelsName.length + 1; k++) {
+                                                
+                        if (obj.Name == modelsName[k - 1]) {
+
+                            result[k][j].Quantity += obj.Quantity;
+                            return;
+                            //if (compareDate(tempDate, result[k][j].Date)) {
+                                
+                            //}
+                            //if (j == result[k].length - 1) {
+                            //    console.log(tempDate);
+                            //    console.log(result[k][j].Date);
+                            //    console.log('error in addDateToResultArr()!');
+                            //}
+                            //break;
+                        }
+                        if (k == modelsName.length) {
+                            console.log('error in second part of addDateToResultArr()!');
+                        }
+                    }
+
                     return;
                 }
-                if (j == result.length - 1) {
+                if (j == result[0].length - 1) {
                     console.log(tempDate);
-                    console.log(result[j].Date);
+                    console.log(result[0][j].Date);
                     console.log('error in addDateToResultArr()!');
-                }
+                }                
             }            
         }
         function addDays(date) {
@@ -208,13 +249,38 @@ function MainController($scope){
         function makeShortDate() {
             var temp = [];
             for (var i = 0; i < result.length; i++) {
-                temp = [
-                    result[i].Date.getFullYear(),
-                    result[i].Date.getMonth() + 1,
-                    result[i].Date.getDate()]
+                for (var k = 0; k < result[i].length; k++) {
+                    temp = [
+                    result[i][k].Date.getFullYear(),
+                    result[i][k].Date.getMonth() + 1,
+                    result[i][k].Date.getDate()]
                     .join('-');
-                result[i].Date = temp;
+                    result[i][k].Date = temp;
+                }
+                
             }
+        }
+        function distinctModels() {
+
+            var res = [];
+            res.push(arr[0].Name);            
+
+            for (var i = 0; i < arr.length; i++) {                
+
+                for (var j = 0; j < res.length; j++) {
+                    
+                    if (res[j] == arr[i].Name) {
+                        break;
+                    }
+                    
+                    if (j == res.length - 1) {
+                        res.push(arr[i].Name);
+                        break;
+                    }
+                }
+                
+            }
+            return res;
         }
     }    
 }
