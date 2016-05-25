@@ -15,8 +15,11 @@ function MainController($scope){
     vm.exportData = false;
     //массив $scope.data обрабатывается и данные о продажах группируются по дням и сохраняются в эту переменную
     vm.dataByDate = false;
+    //массив vm.sDataByDate заполняется массивами данных по месяцам, которые заполняются данными по каждому дню, даже в случае отсутствия продаж в этот день
+    vm.sDataByDate = false;
     $scope.data = false;
     $scope.dataByDate = false;
+    $scope.sDataByDate = false;
 
     //сюда помещаются данные из csv файла сразу после парсинга в виде массивов
     vm.roughData = null;
@@ -119,37 +122,100 @@ function MainController($scope){
 
     //массив $scope.data обрабатывается и данные о продажах группируются по дням и сохраняются в vm.dataByDate
     vm.getDataByDate = getDataByDate;
+    //метод принимает $scope.data, массив должен быть отсортирован по убыванию ShipmentDate, поле ShipmentDate должно иметь значения формата 2016-05-19
+    //метод заполняет массив $scope.dataByDate объектами с полями даты и кол-ва проданных изделий за каждый из дней
     function getDataByDate() {
         if (vm.exportData == false) {
+            console.log('Сначала импортируйте данные о продажах!');
             return
         }
-
+        
         var arr = $scope.data;
-        var result = [{ Date: arr[0].Date, Quantity: arr[0].Quantity }];
+        var result = [];
+        var count = arr[0].Quantity;
+        
+        var startDate = new Date(arr[arr.length - 1].Date);
+        startDate.setHours(12);
+        var endDate = new Date(arr[0].Date);
+        endDate.setHours(12);
+        var tempDate = new Date(arr[arr.length - 1].Date);               
+        tempDate.setHours(12);
 
+        console.log(1);
 
-        for (var i = 1; i < arr.length; i++) {
+        result.push({ Date: tempDate, Quantity: 0 });
+        do {
+            tempDate = addDays(tempDate);
+            result.push({ Date: tempDate, Quantity: 0 });
+        } while (!compareDate(tempDate, endDate));
+        
+        console.log(2);
+        for (var i = 0; i < arr.length; i++) {
             addDateToResultArr(arr[i]);
+            count += arr[i].Quantity;
         }
-
+        console.log(3);
+        makeShortDate();
+        console.log(4);
         vm.dataByDate = result;
         $scope.dataByDate = result;
-
+        console.log(count);
+             
         function addDateToResultArr(obj) {
+            var tempDate = new Date(obj.Date);
+            
             for (var j = 0; j < result.length; j++) {
-                if (obj.Date == result[j].Date) {
+
+                if (compareDate(tempDate, result[j].Date)) {
                     result[j].Quantity += obj.Quantity;
                     return;
                 }
                 if (j == result.length - 1) {
-                    result.push({ Date: obj.Date, Quantity: obj.Quantity });
-                    return;
+                    console.log(tempDate);
+                    console.log(result[j].Date);
+                    console.log('error in addDateToResultArr()!');
                 }
             }            
         }
-    }
+        function addDays(date) {
+            var result = new Date(date);
+            result.setDate(result.getDate() + 1);
+            return result;
+        }
+        function compareDate(dOne, dTwo) {
+
+            var ddOne = dOne.getDate();
+            var mmOne = dOne.getMonth();
+            var yyyyOne = dOne.getYear();
+
+            var ddTwo = dTwo.getDate();
+            var mmTwo = dTwo.getMonth();
+            var yyyyTwo = dTwo.getYear();
+
+            if (ddOne == ddTwo) {
+                if (mmOne == mmTwo) {
+                    if (yyyyOne == yyyyTwo) {
+                        return true;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            console.log('error in compareDate()');
+        }
+        function makeShortDate() {
+            var temp = [];
+            for (var i = 0; i < result.length; i++) {
+                temp = [
+                    result[i].Date.getFullYear(),
+                    result[i].Date.getMonth() + 1,
+                    result[i].Date.getDate()]
+                    .join('-');
+                result[i].Date = temp;
+            }
+        }
+    }    
 }
 })();
-    
-
-    

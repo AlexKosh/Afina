@@ -72,7 +72,7 @@ function ModelController($scope) {
         function chooseDataByDate() {
             var labels = [];
             var datasetsData = [];
-            for (var i = vm.dataByDate.length - 1; i >= 0; i--) {
+            for (var i = 0; i < vm.dataByDate.length; i++) {
                 labels.push(vm.dataByDate[i].Date);
                 datasetsData.push(vm.dataByDate[i].Quantity);
             }
