@@ -1,5 +1,47 @@
 ﻿<div ng-controller="SizesController as vm">
-    <h1>Hello!</h1>
+    <div style="margin-bottom:15px">
+        <div class="btn-group btn-group-justified" role="group">
+            <div class="btn-group" role="group" ng-repeat="mn in vm.modelNames">
+                <button class="btn" ng-class="vm.navArr[$index] ? 'btn-primary' : 'btn-default'"
+                         type="button" ng-click="vm.navArr[$index] = !vm.navArr[$index]">{{mn}}</button>                
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-repeat="mn in vm.modelNames" ng-show="vm.navArr[$index]">
+        <div class="col-md-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>{{mn}} <small>Продажи по размерам </small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">Settings 1</a></li>
+                                <li><a href="#">Settings 2</a></li>
+                            </ul>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a></li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <!-- content starts here -->
+                    <div id="{{$index + 'CH'}}">
+
+                    </div>
+                    <!-- content ends here -->
+                </div>
+            </div>
+        </div>
+    </div>
+        
     <button class="btn btn-primary" ng-click="vm.getDataBySizes()">get data by sizes</button>
+    <button class="btn btn-success" ng-click="vm.initAllCanvas()">init all canvas</button>
+    <button class="btn btn-danger" ng-click="vm.clearAllCanvas()">Clear all canvas</button>
+    <button class="btn btn-info" ng-click="vm.fillAllCharts()">Fill all chart</button>
+    <p>{{vm.modelNames}}</p>
     <p ng-repeat="d in vm.data">{{d}}</p>
 </div>
