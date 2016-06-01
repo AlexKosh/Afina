@@ -106,11 +106,11 @@ function ModelController($scope) {
                     datasetsData.push([]);
                 }
             }
-            
+                        
             vm.dataByModels = { labels: labels, datasets: [] };
             for (var l = 0; l < vm.dataByDate.length - 1; l++) {
                 vm.dataByModels.datasets.push({
-                    label: datasetsData[l][0].Name,
+                    label: vm.dataByDate[l+1][0].Name,
                     fillColor: "rgba(" + (20 + 30 * l) + ","+ (180 - 20 * l) +"," + (120 + 2 * l) + ",0.2)",
                     strokeColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
                     pointColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",

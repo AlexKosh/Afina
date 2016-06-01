@@ -14,12 +14,13 @@
         vm.data = [];
         vm.modelNames = [];
         vm.startEndDates = {};
-        vm.dataBySizes = [];        
+        vm.dataBySizes = [];
+        vm.dataBySizesInWeeks = [];
 
         vm.navArr = [];
         vm.CtxArr = {};
         vm.ChrtArr = {};
-        vm.labelsArray = [];
+        vm.dateLabelsArray = [];        
 
         vm.getDataBySizes = getDataBySizes;
         vm.initAllCanvas = initAllCanvas;
@@ -40,7 +41,8 @@
         }
 
         //создает объект, который содержит поля "имя_модели: {номер_размера: [массив по датам с кол-вом проданного этого размера в эту дату]}"
-        function getDataBySizes() {
+        //isDays определяет будут ли данные на выходе понедельно или подневно
+        function getDataBySizes(isDays) {
 
             var arr = vm.data;
             var dates;
@@ -48,11 +50,13 @@
             var result = {};
 
             result = getStructuredByModelsArray(arr, vm.modelNames);
+            console.log(result);
             fillAnArrayOfData(arr);
 
-            vm.labelsArray = createLabelsArray(dates);
+            isDays ? vm.dateLabelsArray = createDateLabelsArray(dates) : vm.dateLabelsArray = createWeekLabelsArray(result);
+            console.log(vm.dateLabelsArray);
 
-            console.log(result);
+            //console.log(result);
             vm.dataBySizes = result;
             //return result;
                         
@@ -75,7 +79,11 @@
 
                     for (var i = size.min; i <= size.max; i += 2) {
 
-                        res[i] = getDatesArray(dates, name, i);
+                        if (isDays) {
+                            res[i] = getDatesArray(dates, name, i);
+                        } else {
+                            res[i] = getWeeksArray(dates, name, i);
+                        }
 
                         if (i > 100) {
                             console.log('error: size over than 100!');
@@ -137,7 +145,58 @@
                         } while (!compareDate(tempDate, d.end) && i < 366);
 
                         return res;
-                    }                    
+                    }
+                    function getWeeksArray(d, n, s) {
+                        
+
+                        var startWeekDate = null;
+                        var tempWeekDate = null;
+                        var startYearDate = new Date(d.start);
+                        var weekNo = 1;
+                        var weeksArray = [];
+                        startYearDate.setDate(1);
+                        startYearDate.setMonth(0);
+
+                        tempWeekDate = new Date(startYearDate.setDate(1 - startYearDate.getDay()));
+
+                        while (tempWeekDate < d.end) {
+                            
+                            tempWeekDate.setDate(tempWeekDate.getDate() + 7);                            
+                            
+                            if (tempWeekDate > d.start) {
+
+                                if (startWeekDate == null) {
+                                    startWeekDate = new Date(tempWeekDate);
+                                    
+                                    startWeekDate.setDate(startWeekDate.getDate() - 7);
+                                    
+                                    
+                                    weeksArray.push({
+                                        Date: new Date(startWeekDate),
+                                        Size: s,
+                                        Name: n,
+                                        Quantity: 0
+                                    });                                  
+                                }
+
+                                weeksArray.push({
+                                    Date: new Date(tempWeekDate),
+                                    Size: s,
+                                    Name: n,
+                                    Quantity: 0
+                                });                                
+                            }
+
+                            if (weekNo > 55) {
+                                console.log('error: quantity of weeks is bigger than 55!');
+                                break;
+                            }
+                            
+                            weekNo++;
+                        }
+                                                
+                        return weeksArray;
+                    }
                 }
             }
             function fillAnArrayOfData(ar) {
@@ -148,19 +207,39 @@
                 }
 
                 function AddQuanToDate(item, obj) {
+                    //console.log(obj);
 
-                    for (var k = 0; k < obj.length; k++) {
+                    if (isDays) {
 
-                        if (compareDate(obj[k].Date, item.Date)) {
+                        for (var k = 0; k < obj.length; k++) {
 
-                            obj[k].Quantity += item.Quantity;
-                            return;
+                            if (compareDate(obj[k].Date, item.Date)) {
+
+                                obj[k].Quantity += item.Quantity;
+                                return;
+                            }
+
+                            if (k == obj.length - 1) {
+                                console.log('error: AddQuanToDate()!');
+                            }
                         }
 
-                        if (k == obj.length - 1) {
-                            console.log('error: AddQuanToDate()!');
-                        }                        
-                    }
+                    } else {
+
+                        for (var k = 0; k < obj.length; k++) {
+
+                            if (obj[k].Date <= item.Date && obj[k+1].Date > item.Date) {
+                                obj[k].Quantity += item.Quantity;
+                                return;
+                            }
+
+                            if (k == obj.length - 1) {
+                                console.log(obj[k].Date);
+                                console.log(new Date(item.Date));
+                                console.log('error: AddQuanToDate()!');
+                            }
+                        }
+                    }                    
                 }
             }
             
@@ -196,7 +275,7 @@
                 console.log('error in compareDate()');
             }
             
-            function createLabelsArray(d) {
+            function createDateLabelsArray(d) {
                 var tempDate = d.start;
                 var index = 0;
                 var arr = [];
@@ -218,25 +297,43 @@
 
                 return arr;
 
-                function makeShortDate(a) {
-                    var tempArr = [];
-                    var temp = [];
-
-                    for (var i = 0; i < a.length; i++) {
-                        temp = [
-                            a[i].getFullYear(),
-                            a[i].getMonth() + 1,
-                            a[i].getDate()]
-                            .join('-');
-
-                        tempArr.push(temp);
-                    }
-
-                    return tempArr;
+               
+            }
+            function createWeekLabelsArray(ar) {
+                
+                var temp = [];
+                var res = [];
+                for (var size in ar[vm.modelNames[0]]) {
+                    temp = ar[vm.modelNames[0]][size];
+                    break;
                 }
+                
+                for (var i = 0; i < temp.length; i++) {
+                    res.push(temp[i].Date);
+                }
+
+                res = makeShortDate(res);
+
+                return res;
+            }
+            function makeShortDate(a) {
+                var tempArr = [];
+                var temp = [];
+
+                for (var i = 0; i < a.length; i++) {
+                    temp = [
+                        a[i].getFullYear(),
+                        a[i].getMonth() + 1,
+                        a[i].getDate()]
+                        .join('-');
+
+                    tempArr.push(temp);
+                }
+
+                return tempArr;
             }
         }
-
+        
         function initAllCanvas() {
             for (var i = 0; i < vm.modelNames.length; i++) {
 
@@ -260,48 +357,26 @@
         function fillAllCharts() {
             var tempData = {};
             clearAllCanvas();
-            tempData.labels = vm.labelsArray;
+            tempData.labels = vm.dateLabelsArray;
 
             console.log(1);
 
             for (var m = 0; m < vm.modelNames.length; m++) {
                 
-                //console.log('------------------------');
-                //console.log(vm.dataBySizes);
-                //console.log(vm.modelNames[m]);
-                //console.log(vm.dataBySizes[vm.modelNames[m]]);
-                //console.log('------------------------');
-                
-                /*for (var l = 0; l < vm.dataBySizes[vm.modelNames[m]].length; l++) {
-                    tempData.datasets = [];
-                    console.log(3);
-                    tempData.datasets.push( {
-                        label: vm.modelNames[m] + ' size:' + vm.dataBySizes[vm.modelNames[m]][s][0].Size,
-                        fillColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",0.2)",
-                        strokeColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
-                        pointColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
-                        data: getDatasetsData(vm.dataBySizes[vm.modelNames[m]][l])
-                    });
-                    console.log(tempData);
-                }*/
-
                 var l = 0;
                 tempData.datasets = [];
 
                 for (var size in vm.dataBySizes[vm.modelNames[m]]) {
 
                     tempData.datasets.push({
-                        label: vm.modelNames[m] + ' size:' + size,
-                        fillColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",0.2)",
+                        label: size,
+                        data: getDatasetsData(vm.dataBySizes[vm.modelNames[m]][size]),                        
+                        fillColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",0.01)",
                         strokeColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
                         pointColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
                         pointStrokeColor: "#fff",
                         pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
-                        data: getDatasetsData(vm.dataBySizes[vm.modelNames[m]][size])
+                        pointHighlightStroke: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)"                        
                     });
                     l++;                    
                 }
@@ -314,7 +389,7 @@
                             legend: {
                                 display: true,
                                 labels: {
-                                    fontColor: 'rgb(255, 99, 132)'
+                                    fontColor: 'rgb(55,172,172)'
                                 }
                             }
                         }

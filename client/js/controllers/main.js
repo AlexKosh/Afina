@@ -277,7 +277,7 @@ function MainController($scope){
         function getStartEndDates(a) {            
 
             var start = new Date(a[0].Date);
-            var end = new Date(a[0].Date);
+            var end = new Date(a[a.length-1].Date);
 
             for (var i = 0; i < a.length; i++) {
                 if (start > a[i].Date) {
