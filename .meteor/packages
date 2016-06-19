@@ -24,3 +24,4 @@ standard-minifier-js
 fortawesome:fontawesome
 mrt:flot
 dbarrett:dropzonejs
+angular:angular-animate

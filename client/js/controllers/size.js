@@ -11,16 +11,30 @@
         var vm = this;
         console.log('initialized sizes ctrl');
 
+        //navs
+        vm.showOrHideThisChart = showOrHideThisChart;
+        vm.navArr = [];
+        vm.getInfoInConsole = getInfoInConsole;
+
         vm.data = [];
         vm.modelNames = [];
         vm.startEndDates = {};
         vm.dataBySizes = [];
         vm.dataBySizesInWeeks = [];
-
-        vm.navArr = [];
+        //bars
+        vm.dataBySizesinBars = [];
+        
         vm.CtxArr = {};
         vm.ChrtArr = {};
-        vm.dateLabelsArray = [];        
+
+        vm.chartData = { line: {}, bar: {}};
+        //bars
+        vm.CtxArrBar = {};
+        vm.ChrtArrBar = {};
+
+        vm.dateLabelsArray = [];
+        //bars
+        vm.sizeLabelsArray = [];
 
         vm.getDataBySizes = getDataBySizes;
         vm.initAllCanvas = initAllCanvas;
@@ -32,34 +46,56 @@
         function init() {
             checkData();            
             vm.navArr[0] = true;
-            //makeAllCharts();
+            makeCharts();
         }
         function checkData() {
-            $scope.$parent.data != false ? vm.data = $scope.$parent.data : console.log('error: vm.data == undefined!');
-            $scope.$parent.modelName != false ? vm.modelNames = $scope.$parent.modelNames : console.log('error: vm.modelNames == undefined!');
-            $scope.$parent.startEndDates != false ? vm.startEndDates = $scope.$parent.startEndDates : console.log('error: vm.startEndDates == undefined!');
+            var string = '';
+            var needMain = false;
+
+            $scope.$parent.data != false ? vm.data = $scope.$parent.data : backToMain('error: vm.data == undefined!');
+            $scope.$parent.modelNames != false ? vm.modelNames = $scope.$parent.modelNames : backToMain('error: vm.modelNames == undefined!');
+            $scope.$parent.startEndDates != false ? vm.startEndDates = $scope.$parent.startEndDates : backToMain('error: vm.startEndDates == undefined!');
+
+            if (needMain) {
+                console.log(string);
+                alert('Please, import the *.csv file before');
+                location.href = '/main';
+            }
+            function backToMain(str) {
+                string += str + '\n';
+                needMain = true;
+            }
         }
 
         //создает объект, который содержит поля "имя_модели: {номер_размера: [массив по датам с кол-вом проданного этого размера в эту дату]}"
         //isDays определяет будут ли данные на выходе понедельно или подневно
-        function getDataBySizes(isDays) {
+        function getDataBySizes(isDays, rslv) {
 
             var arr = vm.data;
             var dates;
             dates = vm.startEndDates;
             var result = {};
+            var resultBar = {};
 
             result = getStructuredByModelsArray(arr, vm.modelNames);
-            console.log(result);
+            resultBar = getStructuredByModelArray4Bars(vm.modelNames);
+            //console.log('Bar structured data:');
+            //console.log(resultBar);
             fillAnArrayOfData(arr);
+            //console.log('Filled bar structured data:');
+            //console.log(resultBar);
 
             isDays ? vm.dateLabelsArray = createDateLabelsArray(dates) : vm.dateLabelsArray = createWeekLabelsArray(result);
             console.log(vm.dateLabelsArray);
 
             //console.log(result);
             vm.dataBySizes = result;
+            vm.dataBySizesinBars = resultBar;
             //return result;
                         
+            if (rslv != undefined) {
+                rslv();
+            }
             //метод создает структуру "имя_модели: {номер_размера: [массив по датам с кол-вом проданного этого размера в эту дату]}"
             function getStructuredByModelsArray(ar, mNames) {
                 var res = {};
@@ -199,12 +235,25 @@
                     }
                 }
             }
+            function getStructuredByModelArray4Bars(mNames) {
+                var res = {};
+                for (var i = 0; i < mNames.length; i++) {
+                    res[mNames[i]] = [];
+                    for (var size in result[mNames[i]]) {
+                        res[mNames[i]].push({ Name: mNames[i], Size: size, Quantity: 0 });
+                    }
+                }
+                
+                return res;
+            }
             function fillAnArrayOfData(ar) {
                 
                 for (var i = 0; i < ar.length; i++) {
 
-                    AddQuanToDate(ar[i], result[ar[i].Name][ar[i].Size]);
-                }
+                    AddQuanToDate(ar[i], result[ar[i].Name][ar[i].Size]);                    
+                    AddQuanToSize(ar[i], resultBar[ar[i].Name]);
+
+                }                
 
                 function AddQuanToDate(item, obj) {
                     //console.log(obj);
@@ -240,6 +289,17 @@
                             }
                         }
                     }                    
+                }
+                function AddQuanToSize(item, obj) {
+                    for (var i = 0; i < obj.length; i++) {
+                        if (item.Size == obj[i].Size) {
+                            obj[i].Quantity += item.Quantity;
+                            return;
+                        }
+                        if (i == obj.length - 1) {
+                            console.log('error: AddQuanToSize()!');
+                        }
+                    }
                 }
             }
             
@@ -339,74 +399,205 @@
 
                 initCanva(i);
             }
+                                    
+        }
+        function initCanva(index) {
+            //lines:
+            document.getElementById(index + 'CH').innerHTML = '<canvas id="' + index + 'Chart"></canvas>';
+            vm.CtxArr[vm.modelNames[index]] = document.getElementById(index + 'Chart').getContext("2d");
+            //vm.CtxArr[vm.modelNames[index]].canvas.width = document.getElementById(index + 'CH').clientWidth;
+            vm.CtxArr[vm.modelNames[index]].canvas.width = 1029;
+            //magic number: 287!
+            vm.CtxArr[vm.modelNames[index]].canvas.height = 287;
 
-            function initCanva(index) {
-                document.getElementById(index + 'CH').innerHTML = '<canvas id="' + index + 'Chart"></canvas>';
-                vm.CtxArr[vm.modelNames[index]] = document.getElementById(index + 'Chart').getContext("2d");
-                vm.CtxArr[vm.modelNames[index]].canvas.width = document.getElementById(index + 'CH').clientWidth;
-                //magic number: 287!
-                vm.CtxArr[vm.modelNames[index]].canvas.height = 287;
-            }
+            //bars:
+            document.getElementById(index + 'CH4Bar').innerHTML = '<canvas id="' + index + 'BarChart"></canvas>';
+            vm.CtxArrBar[vm.modelNames[index]] = document.getElementById(index + 'BarChart').getContext("2d");
+            //vm.CtxArrBar[vm.modelNames[index]].canvas.width = document.getElementById(index + 'CH4Bar').clientWidth;
+            vm.CtxArrBar[vm.modelNames[index]].canvas.width = 1029;
+            //magic number: 287!
+            vm.CtxArrBar[vm.modelNames[index]].canvas.height = 287;
         }
         function clearAllCanvas() {
             for (var i = 0; i < vm.modelNames.length; i++) {
                 document.getElementById(i + "Chart").remove();
+                document.getElementById(i + "BarChart").remove();
             }
             initAllCanvas();
         }
+        function clearCanvas(i) {
+            document.getElementById(i + "Chart").remove();
+            document.getElementById(i + "BarChart").remove();
+
+            initCanva(i);
+        }
         function fillAllCharts() {
-            var tempData = {};
+                         
             clearAllCanvas();
-            tempData.labels = vm.dateLabelsArray;
+            fillAllLineCharts();
+            fillAllBarCharts();
 
-            console.log(1);
+            function fillAllLineCharts() {
 
-            for (var m = 0; m < vm.modelNames.length; m++) {
-                
-                var l = 0;
-                tempData.datasets = [];
+                var tempData = {};                
+                tempData.labels = vm.dateLabelsArray;
 
-                for (var size in vm.dataBySizes[vm.modelNames[m]]) {
+                for (var m = 0; m < vm.modelNames.length; m++) {
 
-                    tempData.datasets.push({
-                        label: size,
-                        data: getDatasetsData(vm.dataBySizes[vm.modelNames[m]][size]),                        
-                        fillColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",0.01)",
-                        strokeColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
-                        pointColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)"                        
-                    });
-                    l++;                    
-                }
-                console.log(tempData);
-                vm.ChrtArr[vm.modelNames[m]] = new Chart(vm.CtxArr[vm.modelNames[m]],
-                    {
-                        type: 'line',
-                        data: tempData,
-                        options: {
-                            legend: {
-                                display: true,
-                                labels: {
-                                    fontColor: 'rgb(55,172,172)'
-                                }
-                            }
-                        }
+                    tempData = new Object();
+                    tempData.labels = vm.dateLabelsArray;
+
+                    var l = 0;
+                    tempData.datasets = [];
+
+                    for (var size in vm.dataBySizes[vm.modelNames[m]]) {
+
+                        tempData.datasets.push({
+                            label: size,
+                            data: getDatasetsData(vm.dataBySizes[vm.modelNames[m]][size]),
+                            fillColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",0.01)",
+                            strokeColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
+                            pointColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
+                            pointStrokeColor: "#fff",
+                            pointHighlightFill: "#fff",
+                            pointHighlightStroke: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)"
+                        });
+                        l++;
                     }
-                    ).Line(tempData);
-            }
+                    //console.log(tempData);
 
-            function getDatasetsData(arr) {
+                    vm.chartData.line[vm.modelNames[m]] = tempData;
 
-                var r = [];
-
-                for (var i = 0; i < arr.length; i++) {
-                    r.push(arr[i].Quantity);
+                    if (vm.navArr[m] == true) {
+                        vm.ChrtArr[vm.modelNames[m]] = new Chart(
+                            vm.CtxArr[vm.modelNames[m]],
+                            {
+                                type: 'line',
+                                data: tempData,
+                                options: {
+                                    legend: {
+                                        display: true,
+                                        labels: {
+                                            fontColor: 'rgb(55,172,172)'
+                                        }
+                                    }
+                                }
+                            }).Line(tempData);
+                    }
+                    
                 }
 
-                return r;
-            }                        
+                function getDatasetsData(arr) {
+
+                    var r = [];
+
+                    for (var i = 0; i < arr.length; i++) {
+                        r.push(arr[i].Quantity);
+                    }
+
+                    return r;
+                }
+            }
+            function fillAllBarCharts() {
+                //console.log('vm.dataBySizesInbars:');
+                //console.log(vm.dataBySizesinBars);
+                var tempData = { labels: [], datasets: {} };
+
+                for (var i = 0; i < vm.modelNames.length; i++) {
+                    tempData = { labels: [], datasets: {} };
+
+                    tempData = getDataSetsAndLabels(vm.modelNames[i], i);
+                    //console.log('Bar chart temp data: ' + i);
+                    //console.log(tempData);
+                    vm.chartData.bar[vm.modelNames[i]] = tempData;
+
+                    if (vm.navArr[i] == true) {
+                        vm.ChrtArrBar[vm.modelNames[i]] = new Chart(vm.CtxArrBar[vm.modelNames[i]]).Bar(tempData);
+                    }
+                }
+                
+                function getDataSetsAndLabels(mName, l) {
+                    var td = {
+                        labels: [],
+                        datasets: [{
+                            data: [],
+                            fillColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",0.01)",
+                            strokeColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
+                            pointColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
+                            pointStrokeColor: "#fff",
+                            pointHighlightFill: "#fff",
+                            pointHighlightStroke: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)"
+                        }]
+                    };
+                    var arr = vm.dataBySizesinBars;
+
+                    for (var x = 0; x < arr[mName].length; x++) {
+                        td.labels.push(arr[mName][x].Size);
+                        td.datasets[0].data.push(arr[mName][x].Quantity);
+                    }
+
+                    return td;
+                }
+                
+            }
+        }
+
+        function makeCharts() {
+            var promiseGetData = new Promise((resolve, reject) => {
+                getDataBySizes(false, resolve);
+            });
+            promiseGetData.then(() => {
+                initAllCanvas();
+                fillAllCharts();
+            });
+        }
+
+        function showOrHideThisChart(index) {
+            vm.navArr[index] = !vm.navArr[index];
+            console.log(vm.navArr[index]);
+
+            if (vm.navArr[index] == true) {
+                initCanva(index);
+                clearCanvas(index);
+
+                setTimeout(drawThisChart, 5, index);
+            }
+            
+            function drawThisChart(index) {
+                var i = index;              
+                //initCanva(index);
+                //clearCanvas(index);
+                if (vm.chartData.line.hasOwnProperty(vm.modelNames[i])) {
+                    vm.ChrtArr[vm.modelNames[i]] = new Chart(
+                            vm.CtxArr[vm.modelNames[i]],
+                            {
+                                type: 'line',
+                                data: vm.chartData.line[vm.modelNames[i]],
+                                options: {
+                                    legend: {
+                                        display: true,
+                                        labels: {
+                                            fontColor: 'rgb(55,172,172)'
+                                        }
+                                    }
+                                }
+                            }).Line(vm.chartData.line[vm.modelNames[i]]);
+                } else {
+                    console.log('vm.chartData.line has no property ' + vm.modelNames[i]);
+                }
+                
+
+                if (vm.chartData.bar.hasOwnProperty(vm.modelNames[i])) {
+                    vm.ChrtArrBar[vm.modelNames[i]] = new Chart(vm.CtxArrBar[vm.modelNames[i]]).Bar(vm.chartData.bar[vm.modelNames[i]]);
+                } else {
+                    console.log('vm.chartData.bar has no property ' + vm.modelNames[i]);
+                }
+            }
+        }
+        function getInfoInConsole() {
+
+
+            console.log(document.getElementById('0CH4Bar'));
         }
     }
 })();

@@ -1,5 +1,5 @@
 (function(){
-angular.module('Afina', ['angular-meteor', 'ui.router']);
+    angular.module('Afina', ['angular-meteor', 'ui.router', 'ngAnimate']);
 
 //Afina RouteConfig
 angular.module('Afina').config(function ($urlRouterProvider, $stateProvider, $locationProvider) {

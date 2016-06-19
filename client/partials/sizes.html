@@ -5,12 +5,13 @@
         <button class="btn btn-success" ng-click="vm.initAllCanvas()">init all canvas</button>
         <button class="btn btn-danger" ng-click="vm.clearAllCanvas()">Clear all canvas</button>
         <button class="btn btn-info" ng-click="vm.fillAllCharts()">Fill all chart</button>
+        <button class="btn btn-info" ng-click="vm.getInfoInConsole()"> get info about charts</button>
     </div>
     <div style="margin-bottom:15px">
         <div class="btn-group btn-group-justified" role="group">
             <div class="btn-group" role="group" ng-repeat="mn in vm.modelNames">
                 <button class="btn" ng-class="vm.navArr[$index] ? 'btn-primary' : 'btn-default'"
-                         type="button" ng-click="vm.navArr[$index] = !vm.navArr[$index]">{{mn}}</button>                
+                         type="button" ng-click="vm.showOrHideThisChart($index)">{{mn}}</button>                
             </div>
         </div>
     </div>
@@ -39,12 +40,13 @@
                     <div id="{{$index + 'CH'}}">
 
                     </div>
+                    <div id="{{$index + 'CH4Bar'}}" style="margin-top:10px;">
+
+                    </div>
                     <!-- content ends here -->
                 </div>
             </div>
         </div>
     </div>
         
-    <p>{{vm.modelNames}}</p>
-    <p ng-repeat="d in vm.data">{{d}}</p>
 </div>
