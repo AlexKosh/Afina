@@ -1,11 +1,17 @@
 ﻿<div ng-controller="SizesController as vm">
     <div class="nav">
-        <button class="btn btn-primary" ng-click="vm.getDataBySizes(true)">get data by sizes in days</button>
-        <button class="btn btn-primary" ng-click="vm.getDataBySizes(false)">get data by size in weeks</button>
-        <button class="btn btn-success" ng-click="vm.initAllCanvas()">init all canvas</button>
-        <button class="btn btn-danger" ng-click="vm.clearAllCanvas()">Clear all canvas</button>
-        <button class="btn btn-info" ng-click="vm.fillAllCharts()">Fill all chart</button>
-        <button class="btn btn-info" ng-click="vm.getInfoInConsole()"> get info about charts</button>
+        <span class="row">
+            <button class="btn btn-default" ng-click="vm.setMultipleView()">Set multiple view {{vm.multipleStatus}}</button>
+            <button class="btn btn-default" ng-click="vm.showAdditionalNavBtns()">{{vm.showNavStatus}} additional navs</button>
+        </span>         
+        <span class="row" ng-show="vm.showNav == true">
+            <button class="btn btn-primary" ng-click="vm.getDataBySizes(true)">get data by sizes in days</button>
+            <button class="btn btn-primary" ng-click="vm.getDataBySizes(false)">get data by size in weeks</button>
+            <button class="btn btn-success" ng-click="vm.initAllCanvas()">init all canvas</button>
+            <button class="btn btn-danger" ng-click="vm.clearAllCanvas()">Clear all canvas</button>
+            <button class="btn btn-info" ng-click="vm.fillAllCharts()">Fill all chart</button>
+            <button class="btn btn-info" ng-click="vm.getInfoInConsole()"> get info about charts</button>
+        </span>        
     </div>
     <div style="margin-bottom:15px">
         <div class="btn-group btn-group-justified" role="group">

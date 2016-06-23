@@ -12,6 +12,10 @@ function MainController($scope){
     
     //переменная для прогресс-бара
     vm.progress = 0;
+    vm.showAdditionalBtns = false;
+    vm.showAdditionalBtnsStatus = 'Show';
+    vm.setAdditionalBtns = setAdditionalBtns;
+    vm.isParseComplete = false;
     
     //после удачного парсинга файла и последующей удачной обработки, данные помещаются сюда, а пока это false
     vm.exportData = false;
@@ -239,7 +243,7 @@ function MainController($scope){
         //console.log(result);
         console.log(count);
              
-        setProgress(100);
+        setProgress(100);        
 
         function addDateToResultArr(obj) {
             var tempDate = new Date(obj.Date);
@@ -384,7 +388,17 @@ function MainController($scope){
         $scope.$apply(function () {
             vm.progress = x;
             //console.log('progress is: ' + vm.progress);
+            x == 100 ? vm.isParseComplete = true : vm.isParseComplete = false;
         });
+    }
+    function setAdditionalBtns() {
+        if (vm.showAdditionalBtns == true) {
+            vm.showAdditionalBtns = false;
+            vm.showAdditionalBtnsStatus = 'Show';
+        } else {
+            vm.showAdditionalBtns = true;
+            vm.showAdditionalBtnsStatus = 'Hide';
+        }
     }
 
     $(document).ready(function () {
@@ -398,7 +412,10 @@ function MainController($scope){
     });
     $(document).ready(function () {
         $('#checkData').click(function () {
+            console.log($('#file'));
+            console.log($('#fileOpener'));
             tryParseFile();
+
 
         });
 

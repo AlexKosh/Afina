@@ -14,7 +14,13 @@
         //navs
         vm.showOrHideThisChart = showOrHideThisChart;
         vm.navArr = [];
+        vm.showNav = false;
+        vm.showNavStatus = 'Show';
         vm.getInfoInConsole = getInfoInConsole;
+        vm.showAdditionalNavBtns = showAdditionalNavBtns;
+        vm.isMultipleView = false;
+        vm.multipleStatus = 'On';
+        vm.setMultipleView = setMultipleView;        
 
         vm.data = [];
         vm.modelNames = [];
@@ -553,17 +559,30 @@
         }
 
         function showOrHideThisChart(index) {
-            vm.navArr[index] = !vm.navArr[index];
-            console.log(vm.navArr[index]);
+            if (vm.isMultipleView) {
 
-            if (vm.navArr[index] == true) {
-                initCanva(index);
-                clearCanvas(index);
+                vm.navArr[index] = !vm.navArr[index];
 
-                setTimeout(drawThisChart, 5, index);
+                if (vm.navArr[index] == true) {
+                    initCanva(index);
+                    clearCanvas(index);
+
+                    setTimeout(drawThisChart, 5, index);
+                }
+
+            } else {
+
+                for (var i = 0; i < vm.navArr.length; i++) {
+                    vm.navArr[i] = false;
+                }
+                
+                setTimeout(drawThisChart, 150, index);
             }
-            
+                        
             function drawThisChart(index) {
+                $scope.$apply(function () {
+                    vm.navArr[index] = true;
+                });                
                 var i = index;              
                 //initCanva(index);
                 //clearCanvas(index);
@@ -598,6 +617,24 @@
 
 
             console.log(document.getElementById('0CH4Bar'));
+        }
+        function showAdditionalNavBtns() {
+            if (vm.showNavStatus == 'Show') {
+                vm.showNavStatus = 'Hide';
+                vm.showNav = true;
+            } else {
+                vm.showNav = false;
+                vm.showNavStatus = 'Show';
+            }
+        }
+        function setMultipleView() {
+            if (!vm.isMultipleView) {
+                vm.isMultipleView = true;
+                vm.multipleStatus = 'Off';
+            } else {
+                vm.isMultipleView = false;
+                vm.multipleStatus = 'On';
+            }
         }
     }
 })();

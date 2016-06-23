@@ -20,7 +20,7 @@
 .ng-hide-add         { animation:0.3s lightSpeedOut ease; }
 
 /* when showing the picture */
-.ng-hide-remove      { animation:0.3s flipInX ease; }
+.ng-hide-remove      { animation:0.4s lightSpeedIn ease; }
 /* flip in */
 
 @keyframes flipInX {
@@ -67,7 +67,7 @@
   }*/
 }
 
-@keyframes lightSpeedOut {
+/*@keyframes lightSpeedOut {
   0% {
     opacity: 1;
   }
@@ -76,19 +76,31 @@
     transform: translate3d(100%, 0, 0) skewX(30deg);
     transform: translate3d(100%, 0, 0) skewX(30deg);
     opacity: 0;
+  }
+}*/
+
+@keyframes lightSpeedIn {
+  0% {
+      transform: translate3d(0, 100%, 0) skewX(20deg);
+      transform: translate3d(0, 100%, 0) skewX(20deg);
+      transform: translate3d(0, 100%, 0) skewX(20deg);
+      opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
 @keyframes lightSpeedOut {
   0% {
-    opacity: 1;
+      opacity: 1;
   }
 
   100% {
-    transform: translate3d(100%, 0, 0) skewX(30deg);
-    transform: translate3d(100%, 0, 0) skewX(30deg);
-    transform: translate3d(100%, 0, 0) skewX(30deg);
-    opacity: 0;
+      transform: translate3d(100%, 0, 0) skewX(30deg);
+      transform: translate3d(100%, 0, 0) skewX(30deg);
+      transform: translate3d(100%, 0, 0) skewX(30deg);
+      opacity: 0;    
   }
 }
 

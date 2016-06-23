@@ -27,14 +27,18 @@
                                 <input type="file" id="fileOpener" />
                             </div>
                             <div class="col-md-6">
-                                <button class="btn btn-default" id="checkData">Check</button>
-                                <button class="btn btn-default" id="getJsonData">get Json data</button>
-                                <button class="btn btn-default" id="getDataByDate">Data by Date</button>
-                                <button class="btn btn-default" ng-click="vm.addProgress()">Add progress</button>
+                                <span>
+                                    <button class="btn btn-default" ng-click="vm.setAdditionalBtns()">{{vm.showAdditionalBtnsStatus}} additional btns</button>
+                                </span>
+                                <span ng-show="vm.showAdditionalBtns == true">
+                                    <button class="btn btn-default" id="checkData">Check</button>
+                                    <button class="btn btn-default" id="getJsonData">get Json data</button>
+                                    <button class="btn btn-default" id="getDataByDate">Data by Date</button>
+                                </span>
                             </div>
                         </div>  
 
-                        <div>
+                        <div style="margin-top:10px">
                             <div class="progress">
                                 <div class="progress-bar progress-bar-danger progress-bar-striped active" role="progressbar" 
                                      ng-class="{ 'progress-bar-danger': vm.progress < 50, 'progress-bar-warning': vm.progress > 49 && vm.progress < 100, 'progress-bar-success': vm.progress == 100 }"
@@ -44,9 +48,48 @@
                                     {{vm.progress + '%'}}
                                 </div>
                             </div>
-                        </div>                      
+                        </div>         
+                        <div class="row" ng-show="vm.isParseComplete">
+                            <div class="text-center">
+                                <button class="btn btn-success" ui-sref='models'>go models!</button>
+                                <button class="btn btn-success" ui-sref='sizes'>go sizes!</button>
+                            </div>
+                        </div>             
                     </div>
                 </div>
+                <!-- content ends here -->
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Импорт данных <small>Загрузите .csv файл</small></h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Settings 1</a></li>
+                            <li><a href="#">Settings 2</a></li>
+                        </ul>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a></li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <!-- content starts here -->
+                <form action="/file-upload"
+                      class="dropzone"
+                      id="file">
+                    
+                </form>
+                
                 <!-- content ends here -->
             </div>
         </div>
