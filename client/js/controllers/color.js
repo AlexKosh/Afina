@@ -2,14 +2,14 @@
     
     //Afina MainController
     angular.module('Afina')
-        .controller('SizesController', SizesController);
+        .controller('ColorsController', ColorsController);
 
-    SizesController.$inject = ['$scope'];
-    function SizesController($scope) {
+    ColorsController.$inject = ['$scope'];
+    function ColorsController($scope) {
 
         //view model
         var vm = this;
-        console.log('initialized sizes ctrl');
+        console.log('initialized colors ctrl');
 
         //navs
         vm.showOrHideThisChart = showOrHideThisChart;
@@ -20,9 +20,7 @@
         vm.showAdditionalNavBtns = showAdditionalNavBtns;
         vm.isMultipleView = false;
         vm.multipleStatus = 'On';
-        vm.setMultipleView = setMultipleView;
-
-        var colors = false;
+        vm.setMultipleView = setMultipleView;        
 
         vm.data = [];
         vm.modelNames = [];
@@ -44,6 +42,20 @@
         //bars
         vm.sizeLabelsArray = [];
 
+        //for test only
+        vm.colorPalettes = {};
+        var colorsArrayForPalette = [];
+        //var colorsArrayForPalette = ["Жемчуг", "Лаванда", "Пудра", "Синий", "Капучино", "Мята", "Корал", "Сирень", "Малина", "Вишня", "Персик", "Лимон", "Черный"];
+        //for (var x = 0; x < colorsArrayForPalette.length; x++) {
+        //    vm.colorPalettes[colorsArrayForPalette[x]] = '';
+        //}        
+        
+        //vm.colorPalettes = {
+        //    Жемчуг: "Жемчуг", Лаванда: "Лаванда", Пудра: "Пудра", Синий: "Синий", Капучино: "Капучино",
+        //    Вишня: "Вишня", Корал: "Корал", Лимон: "Лимон", Малина: "Малина", Мята: "Мята", Персик: "Персик",
+        //    Сирень: "Сирень", Черный: "Черный"
+        //};
+
         vm.getDataBySizes = getDataBySizes;
         vm.initAllCanvas = initAllCanvas;
         vm.clearAllCanvas = clearAllCanvas;
@@ -63,7 +75,6 @@
             $scope.$parent.data != false ? vm.data = $scope.$parent.data : backToMain('error: vm.data == undefined!');
             $scope.$parent.modelNames != false ? vm.modelNames = $scope.$parent.modelNames : backToMain('error: vm.modelNames == undefined!');
             $scope.$parent.startEndDates != false ? vm.startEndDates = $scope.$parent.startEndDates : backToMain('error: vm.startEndDates == undefined!');
-            colors = $scope.$parent.colorsCollection;
 
             if (needMain) {
                 console.log(string);
@@ -88,20 +99,21 @@
 
             result = getStructuredByModelsArray(arr, vm.modelNames);            
             resultBar = getStructuredByModelArray4Bars(vm.modelNames);
-            console.log(resultBar);
+            
             //console.log('Bar structured data:');
             //console.log(resultBar);
             fillAnArrayOfData(arr);
             //console.log('Filled bar structured data:');
             //console.log(resultBar);
 
-            isDays ? vm.dateLabelsArray = createDateLabelsArray(dates) : vm.dateLabelsArray = createWeekLabelsArray(result);
-            console.log(vm.dateLabelsArray);
+            isDays ? vm.dateLabelsArray = createDateLabelsArray(dates) : vm.dateLabelsArray = createWeekLabelsArray();
+            //console.log(vm.dateLabelsArray);
 
             //console.log(result);
             vm.dataBySizes = result;
             vm.dataBySizesinBars = resultBar;
-                        
+            
+            
             if (rslv != undefined) {
                 rslv();
             }
@@ -110,19 +122,20 @@
                 var res = {};
 
                 for (var i = 0; i < mNames.length; i++) {
-                    res[mNames[i]] = getSizesArray(mNames[i]);
+                    res[mNames[i]] = getColorsArray(mNames[i]);
                 }
                                 
                 return res;
 
-                
-                function getSizesArray(name) {
+                function getColorsArray(name) {
 
                     var res = {};
 
-                    var size = findMinMaxSize();
+                    //var size = findMinMaxSize();
+                    var colors = findAllColors();
+                    addColorsToPalette(colors);
 
-                    for (var i = size.min; i <= size.max; i += 2) {
+                    /*for (var i = size.min; i <= size.max; i += 2) {
 
                         if (isDays) {
                             res[i] = getDatesArray(dates, name, i);
@@ -132,6 +145,20 @@
 
                         if (i > 100) {
                             console.log('error: size over than 100!');
+                            break;
+                        }
+                    }*/
+
+                    for (var i = 0; i < colors.length; i++) {
+
+                        if (isDays) {
+                            res[colors[i]] = getDatesArray(dates, name, colors[i]);
+                        } else {
+                            res[colors[i]] = getWeeksArray(dates, name, colors[i]);
+                        }
+
+                        if (i > 25) {
+                            console.log('error: colors over than 25!');
                             break;
                         }
                     }
@@ -158,8 +185,55 @@
 
                         return s;
                     }
+                    function findAllColors() {
+
+                        var colorArr = [];
+
+                        for (var i = 0; i < ar.length; i++) {
+
+                            if (ar[i].Name == name) {
+
+                                if (colorArr.length == 0) {
+                                    colorArr.push(ar[i].Color);
+                                    continue;
+                                }
+
+                                addColorToColorsArr(ar[i].Color, colorArr)
+
+                            }
+                        }
+                        return colorArr;
+
+                        function addColorToColorsArr(color, ar) {
+
+                            for (var j = 0; j < ar.length; j++) {
+
+                                if (ar[j] == color) {
+                                    return;
+                                } else {
+                                    if (j == ar.length - 1) {
+                                        ar.push(color);
+                                        return;
+                                    }                                    
+                                }
+                            }
+                        }
+                    }
+                    function addColorsToPalette(colArr) {
+
+                        for (var i = 0; i < colArr.length; i++) {
+
+                            if (vm.colorPalettes[colArr[i]] == undefined) {
+                                vm.colorPalettes[colArr[i]] = colArr[i];
+                                colorsArrayForPalette.push(colArr[i]);
+                            } else {
+                                continue;
+                            }
+
+                        }
+                    }
                     //метод создает массив по датам со стартовой по финальную
-                    function getDatesArray(d, n, s) {
+                    function getDatesArray(d, n, c) {
 
                         var tempDate = d.start;
                         var res = [];
@@ -167,7 +241,7 @@
 
                         res.push({
                             Date: tempDate,
-                            Size: s,
+                            Color: c,
                             Name: n,
                             Quantity: 0
                         });
@@ -177,7 +251,7 @@
 
                             res.push({
                                 Date: tempDate,
-                                Size: s,
+                                Color: c,
                                 Name: n,
                                 Quantity: 0
                             });
@@ -191,7 +265,7 @@
 
                         return res;
                     }
-                    function getWeeksArray(d, n, s) {
+                    function getWeeksArray(d, n, c) {
                         
 
                         var startWeekDate = null;
@@ -218,7 +292,7 @@
                                     
                                     weeksArray.push({
                                         Date: new Date(startWeekDate),
-                                        Size: s,
+                                        Color: c,
                                         Name: n,
                                         Quantity: 0
                                     });                                  
@@ -226,7 +300,7 @@
 
                                 weeksArray.push({
                                     Date: new Date(tempWeekDate),
-                                    Size: s,
+                                    Color: c,
                                     Name: n,
                                     Quantity: 0
                                 });                                
@@ -248,8 +322,8 @@
                 var res = {};
                 for (var i = 0; i < mNames.length; i++) {
                     res[mNames[i]] = [];
-                    for (var size in result[mNames[i]]) {
-                        res[mNames[i]].push({ Name: mNames[i], Size: size, Quantity: 0 });
+                    for (var color in result[mNames[i]]) {
+                        res[mNames[i]].push({ Name: mNames[i], Color: color, Quantity: 0 });
                     }
                 }
                 
@@ -259,14 +333,12 @@
                 
                 for (var i = 0; i < ar.length; i++) {
 
-                    AddQuanToDate(ar[i], result[ar[i].Name][ar[i].Size]);                    
-                    AddQuanToSize(ar[i], resultBar[ar[i].Name]);
+                    AddQuanToDate(ar[i], result[ar[i].Name][ar[i].Color]);                    
+                    AddQuanToColor(ar[i], resultBar[ar[i].Name]);
 
-                }                
-
+                }
                 function AddQuanToDate(item, obj) {
-                    //console.log(obj);
-
+                    
                     if (isDays) {
 
                         for (var k = 0; k < obj.length; k++) {
@@ -278,12 +350,13 @@
                             }
 
                             if (k == obj.length - 1) {
-                                console.log('error: AddQuanToDate()!');
+                                console.log('error: AddQuanToDate()! { have no item with this date in array, item: ' + item + ' }');
                             }
                         }
 
                     } else {
-
+                        //console.log(item);
+                        //console.log(obj);
                         for (var k = 0; k < obj.length; k++) {
 
                             if (obj[k].Date <= item.Date && obj[k+1].Date > item.Date) {
@@ -299,14 +372,14 @@
                         }
                     }                    
                 }
-                function AddQuanToSize(item, obj) {
+                function AddQuanToColor(item, obj) {
                     for (var i = 0; i < obj.length; i++) {
-                        if (item.Size == obj[i].Size) {
+                        if (item.Color == obj[i].Color) {
                             obj[i].Quantity += item.Quantity;
                             return;
                         }
                         if (i == obj.length - 1) {
-                            console.log('error: AddQuanToSize()!');
+                            console.log('error: AddQuanToColor()!');
                         }
                     }
                 }
@@ -364,16 +437,16 @@
 
                 arr = makeShortDate(arr);
 
-                return arr;
-
-               
+                return arr;               
             }
-            function createWeekLabelsArray(ar) {
+            function createWeekLabelsArray() {
                 
+                var ar = result;
                 var temp = [];
                 var res = [];
-                for (var size in ar[vm.modelNames[0]]) {
-                    temp = ar[vm.modelNames[0]][size];
+                
+                for (var color in ar[vm.modelNames[0]]) {
+                    temp = ar[vm.modelNames[0]][color];
                     break;
                 }
                 
@@ -447,7 +520,19 @@
             fillAllBarCharts();
 
             function fillAllLineCharts() {
-
+                vm.colorPalettes[colorsArrayForPalette[0]] = "rgba(234, 224, 200"; //жемчуг
+                vm.colorPalettes[colorsArrayForPalette[1]] = "rgba(230, 230, 250"; //лаванда
+                vm.colorPalettes[colorsArrayForPalette[2]] = "rgba(246, 184, 189"; //пудра
+                vm.colorPalettes[colorsArrayForPalette[3]] = "rgba(0, 2, 46";      //синий
+                vm.colorPalettes[colorsArrayForPalette[4]] = "rgba(157, 118, 81";  //капучино
+                vm.colorPalettes[colorsArrayForPalette[5]] = "rgba(170, 240, 209"; //мята
+                vm.colorPalettes[colorsArrayForPalette[6]] = "rgba(250, 223, 173"; //персик
+                vm.colorPalettes[colorsArrayForPalette[7]] = "rgba(117, 19, 27";   //вишня
+                vm.colorPalettes[colorsArrayForPalette[8]] = "rgba(201, 94, 251";  //сирень
+                vm.colorPalettes[colorsArrayForPalette[9]] = "rgba(227, 11, 93";   //малина                
+                vm.colorPalettes[colorsArrayForPalette[10]] = "rgba(255, 64, 64";  //корал
+                vm.colorPalettes[colorsArrayForPalette[11]] = "rgba(227, 255, 0";  //лимон
+                vm.colorPalettes[colorsArrayForPalette[12]] = "rgba(0, 0, 0";      //черный
                 var tempData = {};                
                 tempData.labels = vm.dateLabelsArray;
 
@@ -460,16 +545,16 @@
                     tempData.datasets = [];
 
                     for (var size in vm.dataBySizes[vm.modelNames[m]]) {
-
+                        
                         tempData.datasets.push({
                             label: size,
                             data: getDatasetsData(vm.dataBySizes[vm.modelNames[m]][size]),
-                            fillColor: colors[l] + ",0.01)",
-                            strokeColor: colors[l] + ",1)",
-                            pointColor: colors[l] + ",1)",
+                            fillColor: vm.colorPalettes[size] + ",0)",
+                            strokeColor: vm.colorPalettes[size] + ",1)",
+                            pointColor: vm.colorPalettes[size] + ",1)",
                             pointStrokeColor: "#fff",
                             pointHighlightFill: "#fff",
-                            pointHighlightStroke: colors[l] + ",1)"
+                            pointHighlightStroke: vm.colorPalettes[size] + ",1)"
                         });
                         l++;
                     }
@@ -508,6 +593,20 @@
                 }
             }
             function fillAllBarCharts() {
+                vm.colorPalettes[colorsArrayForPalette[0]] = "rgba(234, 224, 200"; //жемчуг
+                vm.colorPalettes[colorsArrayForPalette[1]] = "rgba(230, 230, 250"; //лаванда
+                vm.colorPalettes[colorsArrayForPalette[2]] = "rgba(246, 184, 189"; //пудра
+                vm.colorPalettes[colorsArrayForPalette[3]] = "rgba(0, 2, 46";      //синий
+                vm.colorPalettes[colorsArrayForPalette[4]] = "rgba(157, 118, 81";  //капучино
+                vm.colorPalettes[colorsArrayForPalette[5]] = "rgba(170, 240, 209"; //мята
+                vm.colorPalettes[colorsArrayForPalette[6]] = "rgba(250, 223, 173"; //персик
+                vm.colorPalettes[colorsArrayForPalette[7]] = "rgba(117, 19, 27";   //вишня
+                vm.colorPalettes[colorsArrayForPalette[8]] = "rgba(201, 94, 251";  //сирень
+                vm.colorPalettes[colorsArrayForPalette[9]] = "rgba(227, 11, 93";   //малина
+                vm.colorPalettes[colorsArrayForPalette[10]] = "rgba(255, 64, 64";  //корал
+                vm.colorPalettes[colorsArrayForPalette[11]] = "rgba(227, 255, 0";  //лимон
+                vm.colorPalettes[colorsArrayForPalette[12]] = "rgba(0, 0, 0";      //черный
+
                 //console.log('vm.dataBySizesInbars:');
                 //console.log(vm.dataBySizesinBars);
                 var tempData = { labels: [], datasets: {} };
@@ -526,38 +625,60 @@
                 }
                 
                 function getDataSetsAndLabels(mName, l) {
+
                     var td = {
                         labels: [],
-                        datasets: [{
+                        datasets: getDataSets(mName, vm.dataBySizesinBars)
+                    };
+
+                    var arr = vm.dataBySizesinBars;
+                    
+                    return td;
+
+                    /*
+                    dataSet = [{
                             data: [],
-                            fillColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",0.01)",
-                            strokeColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
-                            pointColor: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)",
+                            fillColor: vm.colorPalettes[colorsArrayForPalette[l]] + ",0.01)",
+                            strokeColor: vm.colorPalettes[colorsArrayForPalette[l]] + ",1)",
+                            pointColor: vm.colorPalettes[colorsArrayForPalette[l]] + ",1)",
                             pointStrokeColor: "#fff",
                             pointHighlightFill: "#fff",
-                            pointHighlightStroke: "rgba(" + (20 + 30 * l) + "," + (180 - 20 * l) + "," + (120 + 2 * l) + ",1)"
+                            pointHighlightStroke: vm.colorPalettes[colorsArrayForPalette[l]] + ",1)"
                         }]
-                    };
-                    var arr = vm.dataBySizesinBars;
+                    */
 
-                    for (var x = 0; x < arr[mName].length; x++) {
-                        td.labels.push(arr[mName][x].Size);
-                        td.datasets[0].data.push(arr[mName][x].Quantity);
+                    function getDataSets(mN, arr) {
+                        var dataSet = [];
+
+                        for (var x = 0; x < arr[mN].length; x++) {
+                            dataSet.push({ data: [arr[mN][x].Quantity] });
+
+                            //dataSet[x].data.push(arr[mN][x].Quantity);
+                            dataSet[x].label = arr[mN][x].Color;
+                            dataSet[x].fillColor = vm.colorPalettes[arr[mN][x].Color] + ",0.81)";
+                            dataSet[x].strokeColor = vm.colorPalettes[arr[mN][x].Color] + ",1)";
+                            dataSet[x].pointColor = vm.colorPalettes[arr[mN][x].Color] + ",1)";
+                            dataSet[x].pointStrokeColor = "#fff";
+                            dataSet[x].pointHighlightFill = "#fff";
+                            dataSet[x].pointHighlightStroke = vm.colorPalettes[arr[mN][x].Color] + ",1)";
+                        }
+
+                        return dataSet;
                     }
-
-                    return td;
                 }
                 
             }
         }
 
         function makeCharts() {
+
             var promiseGetData = new Promise((resolve, reject) => {
                 getDataBySizes(false, resolve);
             });
+
             promiseGetData.then(() => {
                 initAllCanvas();
-                fillAllCharts();
+                fillAllCharts();                
             });
         }
 

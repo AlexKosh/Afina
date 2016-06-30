@@ -34,6 +34,30 @@ function MainController($scope){
     $scope.startEndDates = false;
     //сюда помещаются данные из csv файла сразу после парсинга в виде массивов
     vm.roughData = null;
+
+    //alizarin, torquoise, cerulean blue, malachite, gold, teal, orangeRed, indigo, azalea, perano,
+    //madang, red berry, myrtle, mardi gras, free speech magenta, cream can, cocoa brown
+    $scope.colorsCollection = [
+        "rgba(227, 38, 54",
+        "rgba(38, 227, 221",
+        "rgba(39, 72, 192",
+        "rgba(32, 217, 89",
+        "rgba(255, 215, 0",
+        "rgba(0, 128, 128",
+        "rgba(255, 69, 0",
+        "rgba(76, 3, 184",
+        "rgba(246, 184, 189",
+        "rgba(184, 189, 246",
+
+        "rgba(189, 246, 184",
+        "rgba(117, 19, 27",
+        "rgba(18, 75, 12",
+        "rgba(69, 12, 75",
+        "rgba(241, 76, 214",
+        "rgba(245, 196, 93",
+        "rgba(42, 30, 21"
+    ]
+
     /*метод принимает файл выбранный в input[id="fileOpener"], файл должен быть только по шаблону от TradeGecko Exporter
     *парсит csv в json с помощью papaParse.js, если парсинг проходит успешно - вызывается функция 'complete'         
     */
@@ -67,7 +91,7 @@ function MainController($scope){
                     });
 
                     promise.then(() => {
-                        setTimeout(getDataByDate, 300);
+                        setTimeout(getDataByDate, 300, false); //3-rd arg for isDays
 
                         setProgress(70);
                         
@@ -85,11 +109,7 @@ function MainController($scope){
 
         selectTargetColumns();
         $scope.modelNames = distinctModels();
-
-        //$scope.$apply(function () {
-        //    setProgress(50);
-        //});
-
+        
         return true;
         //в csv файле по шаблону TradeGecko Exportera больше 20 колонок, эта функция отделяет зерна от плевел
         function selectTargetColumns() {
@@ -110,7 +130,8 @@ function MainController($scope){
             vm.exportData = data;
             $scope.data = data;
             //$scope.$apply();
-
+            console.log('JSON Data:');
+            console.log(data);
             /*возвращает индексы нужных нам колонок в массиве всего csv файла, т е из 20 колонок он вернет 5 цифр,
              * к примеру, [1, 4, 6, 12, 15] - это и будут номера нужных нам колонок в массиве vm.roughData */
             function getHeaderIndexes(targCol) {
@@ -183,12 +204,11 @@ function MainController($scope){
             }
         }
     }
-    function getDataByDate() {
+    function getDataByDate(isDays) {
         if (vm.exportData == false) {
             console.log('Сначала импортируйте данные о продажах!');
             return
-        }
-        
+        }        
         
         var arr = $scope.data;
         var result = [[]];
@@ -199,30 +219,108 @@ function MainController($scope){
         //console.log(dates);
                 
         var modelsName = $scope.modelNames;
-                
-        //создаем массивы заполненные датами от первой даты продаж до последней в arr[]
-        //[0] - сумма продаж по всем моделям, [1],[2],[3]... - сумма продаж по каждой из моделей в отдельности
-        for (var k = 0; k < modelsName.length + 1; k++) {
-            result[k].push({ Date: tempDate, Quantity: 0, Name: modelsName[k - 1] || '' });
-
-            var iterator = 0;
-            do {
-                tempDate = addDays(tempDate);
+        
+        if (isDays) {
+            //создаем массивы заполненные датами от первой даты продаж до последней в arr[]
+            //[0] - сумма продаж по всем моделям, [1],[2],[3]... - сумма продаж по каждой из моделей в отдельности
+            for (var k = 0; k < modelsName.length + 1; k++) {
                 result[k].push({ Date: tempDate, Quantity: 0, Name: modelsName[k - 1] || '' });
-                if (iterator > 1000) {
-                    console.log("error: iterator > 10 000!");
+
+                var iterator = 0;
+                do {
+                    tempDate = addDays(tempDate);
+                    result[k].push({ Date: tempDate, Quantity: 0, Name: modelsName[k - 1] || '' });
+                    if (iterator > 1000) {
+                        console.log("error: iterator > 10 000!");
+                        break;
+                    }
+                    iterator++;
+                } while (!compareDate(tempDate, dates.end));
+
+                if (modelsName.length != k) {
+                    tempDate = new Date(arr[arr.length - 1].Date);
+                    tempDate.setHours(12);
+                    result.push([]);
+                }
+                tempDate = dates.start;
+            }
+
+        } else {
+            //создаем массивы заполненные датами от первой даты продаж до последней в arr[]
+            //[0] - сумма продаж по всем моделям, [1],[2],[3]... - сумма продаж по каждой из моделей в отдельности
+            for (var k = 0; k < modelsName.length + 1; k++) {
+                result[k] = getWeeksArray(dates, modelsName[k - 1] || '');
+                /*result[k].push({ Date: tempDate, Quantity: 0, Name: modelsName[k - 1] || '' });
+
+                var iterator = 0;
+                do {
+                    tempDate = addDays(tempDate);
+                    result[k].push({ Date: tempDate, Quantity: 0, Name: modelsName[k - 1] || '' });
+                    if (iterator > 1000) {
+                        console.log("error: iterator > 10 000!");
+                        break;
+                    }
+                    iterator++;
+                } while (!compareDate(tempDate, dates.end));
+
+                if (modelsName.length != k) {
+                    tempDate = new Date(arr[arr.length - 1].Date);
+                    tempDate.setHours(12);
+                    result.push([]);
+                }
+                tempDate = dates.start;*/
+            }
+        }
+        console.log(result);
+        function getWeeksArray(d, n) {
+
+
+            var startWeekDate = null;
+            var tempWeekDate = null;
+            var startYearDate = new Date(d.start);
+            var weekNo = 1;
+            var weeksArray = [];
+            startYearDate.setDate(1);
+            startYearDate.setMonth(0);
+
+            tempWeekDate = new Date(startYearDate.setDate(1 - startYearDate.getDay()));
+
+            while (tempWeekDate < d.end) {
+
+                tempWeekDate.setDate(tempWeekDate.getDate() + 7);
+
+                if (tempWeekDate > d.start) {
+
+                    if (startWeekDate == null) {
+                        startWeekDate = new Date(tempWeekDate);
+
+                        startWeekDate.setDate(startWeekDate.getDate() - 7);
+
+
+                        weeksArray.push({
+                            Date: new Date(startWeekDate),
+                            Name: n,
+                            Quantity: 0
+                        });
+                    }
+
+                    weeksArray.push({
+                        Date: new Date(tempWeekDate),
+                        Name: n,
+                        Quantity: 0
+                    });
+                }
+
+                if (weekNo > 55) {
+                    console.log('error: quantity of weeks is bigger than 55!');
                     break;
                 }
-                iterator++;
-            } while (!compareDate(tempDate, dates.end));
 
-            if (modelsName.length != k) {
-                tempDate = new Date(arr[arr.length - 1].Date);
-                tempDate.setHours(12);
-                result.push([]);
+                weekNo++;
             }
-            tempDate = dates.start;
-        }        
+
+            return weeksArray;
+        }
         
         //$scope.$apply(function () {
         //    setProgress(65);
@@ -242,48 +340,92 @@ function MainController($scope){
         $scope.dataByDate = result;
         //console.log(result);
         console.log(count);
+        console.log('Data by Date:');
+        console.log(result);
              
         setProgress(100);        
 
         function addDateToResultArr(obj) {
             var tempDate = new Date(obj.Date);
             
-            for (var j = 0; j < result[0].length; j++) {
-                                
-                //заполняем result[0] - массив с суммой всех продаж по времени
-                if (compareDate(tempDate, result[0][j].Date)) {
-                    result[0][j].Quantity += obj.Quantity;
+            if (isDays) {
+                for (var j = 0; j < result[0].length; j++) {
 
-                    //заполняем result[1...] массивы с продажами по моделям по времени
-                    for (var k = 1; k < modelsName.length + 1; k++) {
-                                                
-                        if (obj.Name == modelsName[k - 1]) {
+                    //заполняем result[0] - массив с суммой всех продаж по времени
+                    if (compareDate(tempDate, result[0][j].Date)) {
+                        result[0][j].Quantity += obj.Quantity;
 
-                            result[k][j].Quantity += obj.Quantity;
-                            return;
-                            //if (compareDate(tempDate, result[k][j].Date)) {
-                                
-                            //}
-                            //if (j == result[k].length - 1) {
-                            //    console.log(tempDate);
-                            //    console.log(result[k][j].Date);
-                            //    console.log('error in addDateToResultArr()!');
-                            //}
-                            //break;
+                        //заполняем result[1...] массивы с продажами по моделям по времени
+                        for (var k = 1; k < modelsName.length + 1; k++) {
+
+                            if (obj.Name == modelsName[k - 1]) {
+
+                                result[k][j].Quantity += obj.Quantity;
+                                return;
+                                //if (compareDate(tempDate, result[k][j].Date)) {
+
+                                //}
+                                //if (j == result[k].length - 1) {
+                                //    console.log(tempDate);
+                                //    console.log(result[k][j].Date);
+                                //    console.log('error in addDateToResultArr()!');
+                                //}
+                                //break;
+                            }
+                            if (k == modelsName.length) {
+                                console.log('error in second part of addDateToResultArr()!');
+                            }
                         }
-                        if (k == modelsName.length) {
-                            console.log('error in second part of addDateToResultArr()!');
+
+                        return;
+                    }
+                    if (j == result[0].length - 1) {
+                        console.log(tempDate);
+                        console.log(result[0][j].Date);
+                        console.log('error in addDateToResultArr()!');
+                    }
+                }
+            } else {
+
+                for (var j = 0; j < result[0].length; j++) {
+
+                    //заполняем result[0] - массив с суммой всех продаж по времени
+                    if (result[0][j].Date <= tempDate && result[0][j + 1].Date > tempDate) {
+                        result[0][j].Quantity += obj.Quantity;
+
+                        //заполняем result[1...] массивы с продажами по моделям по времени
+                        for (var k = 1; k < modelsName.length + 1; k++) {
+
+                            if (obj.Name == modelsName[k - 1]) {
+
+                                result[k][j].Quantity += obj.Quantity;
+                                return;
+                                //if (compareDate(tempDate, result[k][j].Date)) {
+
+                                //}
+                                //if (j == result[k].length - 1) {
+                                //    console.log(tempDate);
+                                //    console.log(result[k][j].Date);
+                                //    console.log('error in addDateToResultArr()!');
+                                //}
+                                //break;
+                            }
+                            if (k == modelsName.length) {
+                                console.log('error in second part of addDateToResultArr()!');
+                            }
                         }
+
+                        return;
                     }
 
-                    return;
+                    if (j == result[0].length - 1) {
+                        console.log(tempDate);
+                        console.log(result[0][j].Date);
+                        console.log('error in addDateToResultArr()!');
+                    }
                 }
-                if (j == result[0].length - 1) {
-                    console.log(tempDate);
-                    console.log(result[0][j].Date);
-                    console.log('error in addDateToResultArr()!');
-                }                
-            }            
+            }
+                        
         }
         function addDays(date) {
             var result = new Date(date);
