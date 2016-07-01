@@ -35,9 +35,32 @@ function MainController($scope){
     //сюда помещаются данные из csv файла сразу после парсинга в виде массивов
     vm.roughData = null;
 
+    //purple, blue, teal, green, orange, orangeRed, red, grey, darkGrey, malin
+    $scope.colorsCollection = [        
+        "rgba(142, 68, 173",
+        "rgba(36, 113, 163",
+        "rgba(52, 152, 219",
+        "rgba(22, 160, 133",
+        "rgba(46, 204, 113",
+        "rgba(243, 156, 18",
+        "rgba(211, 84, 0",
+        "rgba(192, 57, 43",
+        "rgba(149, 165, 166",
+        "rgba(44, 62, 80",
+        "rgba(233, 30, 99",
+        "rgba(184, 189, 246",
+
+        "rgba(189, 246, 184",
+        "rgba(117, 19, 27",
+        "rgba(18, 75, 12",
+        "rgba(69, 12, 75",
+        "rgba(241, 76, 214",
+        "rgba(245, 196, 93",
+        "rgba(42, 30, 21"
+    ]
     //alizarin, torquoise, cerulean blue, malachite, gold, teal, orangeRed, indigo, azalea, perano,
     //madang, red berry, myrtle, mardi gras, free speech magenta, cream can, cocoa brown
-    $scope.colorsCollection = [
+    /*$scope.colorsCollection = [
         "rgba(227, 38, 54",
         "rgba(38, 227, 221",
         "rgba(39, 72, 192",
@@ -56,7 +79,7 @@ function MainController($scope){
         "rgba(241, 76, 214",
         "rgba(245, 196, 93",
         "rgba(42, 30, 21"
-    ]
+    ]*/
 
     /*метод принимает файл выбранный в input[id="fileOpener"], файл должен быть только по шаблону от TradeGecko Exporter
     *парсит csv в json с помощью papaParse.js, если парсинг проходит успешно - вызывается функция 'complete'         
