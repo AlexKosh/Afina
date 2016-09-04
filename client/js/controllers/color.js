@@ -60,7 +60,7 @@
         vm.initAllCanvas = initAllCanvas;
         vm.clearAllCanvas = clearAllCanvas;
         vm.fillAllCharts = fillAllCharts;
-
+        
         init();
         
         function init() {

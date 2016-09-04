@@ -21,6 +21,10 @@ angular.module('Afina').config(function ($urlRouterProvider, $stateProvider, $lo
     .state('colors', {
         url: '/colors',
         template: '<colors-page></colors-page>'
+    })
+    .state('tables', {
+        url: '/tables',
+        template: '<tables-page></tables-page>'
     });
  
     $urlRouterProvider.otherwise("/");

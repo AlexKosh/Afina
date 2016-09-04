@@ -1,4 +1,109 @@
-﻿<div class="row">
+﻿<div>
+    <div class="row">
+        <h3 class="text-center"> История продаж</h3>
+        <div class="well">
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="file" id="fileOpener" />
+                </div>
+                <div class="col-md-6">
+                    <span>
+                        <button class="btn btn-default" ng-click="vm.setAdditionalBtns()">{{vm.showAdditionalBtnsStatus}} additional btns</button>
+                    </span>
+                    <span ng-show="vm.showAdditionalBtns == true">
+                        <button class="btn btn-default" id="checkData">Check</button>
+                        <button class="btn btn-default" id="getJsonData">get Json data</button>
+                        <button class="btn btn-default" id="getDataByDate">Data by Date</button>
+                    </span>
+                </div>
+            </div>
+
+            <div style="margin-top:10px">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-danger progress-bar-striped active" role="progressbar"
+                         ng-class="{ 'progress-bar-danger': vm.progress < 50, 'progress-bar-warning': vm.progress > 49 && vm.progress < 100, 'progress-bar-success': vm.progress == 100 }"
+                         aria-valuenow="{{vm.progress}}" aria-valuemin="0" aria-valuemax="100"
+                         style="min-width: 2em; width:{{vm.progress + '%'}}" async>
+                        <span class="sr-only">{{vm.progress + '% Complete'}}</span>
+                        {{vm.progress + '%'}}
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-show="vm.isParseComplete">
+                <div class="text-center">
+                    <button class="btn btn-success" ui-sref='model'>go models!</button>
+                    <button class="btn btn-success" ui-sref='sizes'>go sizes!</button>
+                    <button class="btn btn-success" ui-sref='colors'>go colors!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <h3 class="text-center"> Остаток на складе</h3>
+        <div class="well">
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="file" id="fileOpenerStockOnHand" />
+                </div>                
+            </div>
+            <div style="margin-top:10px">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-danger progress-bar-striped active" role="progressbar"
+                         ng-class="{ 'progress-bar-danger': vm.progressSoH < 50, 'progress-bar-warning': vm.progressSoH > 49 && vm.progressSoH < 100, 'progress-bar-success': vm.progressSoH == 100 }"
+                         aria-valuenow="{{vm.progressSoH}}" aria-valuemin="0" aria-valuemax="100"
+                         style="min-width: 2em; width:{{vm.progressSoH + '%'}}" async>
+                        <span class="sr-only">{{vm.progressSoH + '% Complete'}}</span>
+                        {{vm.progressSoH + '%'}}
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-show="vm.isParseSoHComplete">
+                <div class="text-center">
+                    <button class="btn btn-success" ui-sref='model'>go models!</button>
+                    <button class="btn btn-success" ui-sref='sizes'>go sizes!</button>
+                    <button class="btn btn-success" ui-sref='colors'>go colors!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <h3 class="text-center"> Продажи по вариантам</h3>
+        <div class="well">
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="file" id="fileOpenerVariantSales" />
+                </div>
+            </div>
+            <div style="margin-top:10px">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-danger progress-bar-striped active" role="progressbar"
+                         ng-class="{ 'progress-bar-danger': vm.progressVS < 50, 'progress-bar-warning': vm.progressVS > 49 && vm.progressVS < 100, 'progress-bar-success': vm.progressVS == 100 }"
+                         aria-valuenow="{{vm.progressVS}}" aria-valuemin="0" aria-valuemax="100"
+                         style="min-width: 2em; width:{{vm.progressVS + '%'}}" async>
+                        <span class="sr-only">{{vm.progressVS + '% Complete'}}</span>
+                        {{vm.progressSVS + '%'}}
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-show="vm.isParseVSComplete">
+                <div class="text-center">
+                    <button class="btn btn-success" ui-sref='model'>go stock on hand!</button>
+                    <button class="btn btn-success" ui-sref='sizes'>go sales!</button>
+                    <button class="btn btn-success" ui-sref='colors'>go print!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form action="#" class="dropzone dz-clickable" id="uberForm" ng-show="false">
+        <div class="dz-default dz-message">
+            <span>
+                Drop files here to upload
+            </span>
+        </div>
+    </form>    
+</div>
+
+<!--<div class="row">
     <div class="col-md-12">
         <div class="x_panel">
             <div class="x_title">
@@ -19,50 +124,12 @@
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
-                <!-- content starts here -->
-                <div>
-                    <div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="file" id="fileOpener" />
-                            </div>
-                            <div class="col-md-6">
-                                <span>
-                                    <button class="btn btn-default" ng-click="vm.setAdditionalBtns()">{{vm.showAdditionalBtnsStatus}} additional btns</button>
-                                </span>
-                                <span ng-show="vm.showAdditionalBtns == true">
-                                    <button class="btn btn-default" id="checkData">Check</button>
-                                    <button class="btn btn-default" id="getJsonData">get Json data</button>
-                                    <button class="btn btn-default" id="getDataByDate">Data by Date</button>
-                                </span>
-                            </div>
-                        </div>  
-
-                        <div style="margin-top:10px">
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-danger progress-bar-striped active" role="progressbar" 
-                                     ng-class="{ 'progress-bar-danger': vm.progress < 50, 'progress-bar-warning': vm.progress > 49 && vm.progress < 100, 'progress-bar-success': vm.progress == 100 }"
-                                     aria-valuenow="{{vm.progress}}" aria-valuemin="0" aria-valuemax="100" 
-                                     style="min-width: 2em; width:{{vm.progress + '%'}}" async>
-                                    <span class="sr-only">{{vm.progress + '% Complete'}}</span>                                    
-                                    {{vm.progress + '%'}}
-                                </div>
-                            </div>
-                        </div>         
-                        <div class="row" ng-show="vm.isParseComplete">
-                            <div class="text-center">
-                                <button class="btn btn-success" ui-sref='model'>go models!</button>
-                                <button class="btn btn-success" ui-sref='sizes'>go sizes!</button>
-                                <button class="btn btn-success" ui-sref='colors'>go colors!</button>
-                            </div>
-                        </div>             
-                    </div>
-                </div>
-                <!-- content ends here -->
+                
             </div>
         </div>
     </div>
 </div>
+
 <div class="row">
     <div class="col-md-12">
         <div class="x_panel">
@@ -84,15 +151,15 @@
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
-                <!-- content starts here -->
+                
                 <form action="/file-upload"
                       class="dropzone"
                       id="file">
                     
                 </form>
                 
-                <!-- content ends here -->
+                
             </div>
         </div>
     </div>
-</div>
+</div>-->

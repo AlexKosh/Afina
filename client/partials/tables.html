@@ -1,0 +1,21 @@
+﻿<div ng-controller="TablesController as vm"> 
+    <button class="btn btn-default" ng-click="vm.ShowSales = !vm.ShowSales">Show Sales</button>   
+    <button class="btn btn-default" ng-click="vm.ShowStock = !vm.ShowStock">Show Stock</button> 
+    <div class="row">
+        <table class="table" ng-repeat="model in vm.structuredDataSoH track by $index" ng-show="model[0][0].Product == '442 Лера' || model[0][0].Product == '443 Рита' || model[0][0].Product == '444 Парка'">
+            <tr>
+                <th>{{model[0][0].Product}}</th>
+                <th ng-repeat="size in model[0]">{{size.Size}}</th>
+            </tr>
+            <tr ng-repeat="color in model track by $index">
+                <th>{{color[0].Color}}</th>
+                <td ng-repeat="j in color track by j.SKU"><span class="btn btn-default" ng-click="doWork(j)">
+                    <span ng-show="vm.ShowSales">{{j.Sold}}</span>
+                    <span ng-show="vm.ShowSales && vm.ShowStock">{{' / '}}</span>
+                    <span ng-show="vm.ShowStock">{{j.InStock}}</span>
+                    </span></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
