@@ -232,8 +232,8 @@
                                 });                                
                             }
 
-                            if (weekNo > 55) {
-                                console.log('error: quantity of weeks is bigger than 55!');
+                            if (weekNo > 276) {
+                                console.log('error: quantity of weeks is bigger than 276!');
                                 break;
                             }
                             

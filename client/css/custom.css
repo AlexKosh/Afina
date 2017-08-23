@@ -104,6 +104,19 @@
   }
 }
 
+.table-head{
+    color: snow;
+    background-color:#3f5265;
+}
+
+.table-foot{
+    color:	#3f5265;
+    background-color:#dfe5eb;
+}
+
+.table-well {
+    background-color:snow;
+}
 
 .nav-sm .container.body .col-md-3.left_col {
   width: 70px;

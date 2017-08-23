@@ -1,21 +1,87 @@
-﻿<div ng-controller="TablesController as vm"> 
-    <button class="btn btn-default" ng-click="vm.ShowSales = !vm.ShowSales">Show Sales</button>   
-    <button class="btn btn-default" ng-click="vm.ShowStock = !vm.ShowStock">Show Stock</button> 
-    <div class="row">
-        <table class="table" ng-repeat="model in vm.structuredDataSoH track by $index" ng-show="model[0][0].Product == '442 Лера' || model[0][0].Product == '443 Рита' || model[0][0].Product == '444 Парка'">
-            <tr>
-                <th>{{model[0][0].Product}}</th>
-                <th ng-repeat="size in model[0]">{{size.Size}}</th>
-            </tr>
-            <tr ng-repeat="color in model track by $index">
-                <th>{{color[0].Color}}</th>
-                <td ng-repeat="j in color track by j.SKU"><span class="btn btn-default" ng-click="doWork(j)">
-                    <span ng-show="vm.ShowSales">{{j.Sold}}</span>
-                    <span ng-show="vm.ShowSales && vm.ShowStock">{{' / '}}</span>
-                    <span ng-show="vm.ShowStock">{{j.InStock}}</span>
-                    </span></td>
-            </tr>
-        </table>
+﻿<div ng-controller="TablesController as vm">    
+
+    <div class="btn-group" role="group">
+        <button type="button" 
+                ng-repeat="m in vm.structuredDataSoH track by $index"
+                class="btn" ng-class="{'btn-dark': vm.btnsArrCss[$index], 'btn-default': !vm.btnsArrCss[$index]}"
+                ng-click="vm.showModel(m[0][0].Product, m, $index)">
+            {{m[0][0].Product}}
+        </button>               
+    </div>
+       
+    <div class="row" style="margin-top:10px"
+         ng-repeat="model in vm.viewArr track by $index">   
+
+        <div class="well table-well">
+            <h1 class="text-center">{{model[0][0].Product}}</h1>
+            <h2 class="text-left">ОСТАТОК НА СКЛАДЕ</h2>
+            <table class="table table-bordered table-condensed">
+                <thead class="table-head">
+                    <tr>
+                        <th>{{model[0][0].Product}}</th>
+                        <th ng-repeat="size in model[0]">{{size.Size}}</th>
+                        <th>Сумма</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="color in model track by $index">
+                        <th>{{color[0].Color}}</th>
+                        <td ng-repeat="j in color track by j.SKU">
+                            <span>
+                                <span>{{j.InStock}}</span>
+                            </span>
+                        </td>
+                        <th>
+                            {{vm.viewArrSum[model[0][0].Product][color[0].Color].SoH}}
+                        </th>
+                    </tr>
+                </tbody>
+                <tfoot class="table-foot">
+                    <tr>
+                        <th>сумма, по размерам:</th>
+                        <th ng-repeat="j in model[0] track by j.SKU"> {{vm.viewArrSum[model[0][0].Product][j.Size].SoH}} </th>
+                        <th>
+                            {{vm.viewArrSum[model[0][0].Product].SoHSum}}
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <h2 class="text-left">ПРОДАЖИ ПО ВАРИАНТАМ</h2>
+            <table class="table table-bordered table-condensed">
+                <thead class="table-head">
+                    <tr>
+                        <th>{{model[0][0].Product}}</th>
+                        <th ng-repeat="size in model[0]">{{size.Size}}</th>
+                        <th>Сумма</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="color in model track by $index">
+                        <th>{{color[0].Color}}</th>
+                        <td ng-repeat="j in color track by j.SKU">
+                            <span>
+                                <span>{{j.Sold}}</span>
+                            </span>
+                        </td>
+                        <th>
+                            {{vm.viewArrSum[model[0][0].Product][color[0].Color].Sold}}
+                        </th>
+                    </tr>
+                </tbody>
+                <tfoot class="table-foot">
+                    <tr>
+                        <th>сумма, по размерам:</th>
+                        <th ng-repeat="j in model[0] track by j.SKU"> {{vm.viewArrSum[model[0][0].Product][j.Size].Sold}} </th>
+                        <th>
+                            {{vm.viewArrSum[model[0][0].Product].SoldSum}}
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        
     </div>
 </div>
 

@@ -1,0 +1,41 @@
+﻿<div ng-controller="PosController as vm">  
+    <button class="btn btn-default" ng-click="doWork()">fill the mongo</button>
+    <div class="row">
+        <table class="table" ng-repeat="model in vm.StructuredData track by $index">
+            <tr>
+                <th>{{model[0][0].Product}}</th>
+                <th ng-repeat="size in model[0]">{{size.Size}}</th>
+            </tr>
+            <tr ng-repeat="color in model track by $index">
+                <th>{{color[0].Color}}</th>
+                <td ng-repeat="j in color track by j.SKU"><span class="btn btn-default" ng-click="doWork(j)">
+                    <span>{{j.InStock}}</span>
+                    <!--<span ng-show="vm.ShowSales">{{j.Sold}}</span>
+                    <span ng-show="vm.ShowSales && vm.ShowStock">{{' / '}}</span>
+                    <span ng-show="vm.ShowStock">{{j.InStock}}</span>-->
+                    </span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row">
+        <table class="table" ng-repeat="model in vm.StructuredCollectionsData track by $index">
+            <tr>
+                <th>{{model[0][0].Product}}</th>
+                <th ng-repeat="size in model[0]">{{size.Size}}</th>
+            </tr>
+            <tr ng-repeat="color in model track by $index">
+                <th>{{color[0].Color}}</th>
+                <td ng-repeat="j in color track by j.SKU">
+                    <span class="btn btn-default" ng-click="doWork(j)">
+                        <span>{{j.InStock}}</span>
+                        <!--<span ng-show="vm.ShowSales">{{j.Sold}}</span>
+                        <span ng-show="vm.ShowSales && vm.ShowStock">{{' / '}}</span>
+                        <span ng-show="vm.ShowStock">{{j.InStock}}</span>-->
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+

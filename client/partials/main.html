@@ -1,20 +1,93 @@
-﻿<div>
+﻿<div>    
+    <h1>Импорт данных для таблиц цветов и размеров</h1>
     <div class="row">
-        <h3 class="text-center"> История продаж</h3>
-        <div class="well">
-            <div class="row">
-                <div class="col-md-6">
-                    <input type="file" id="fileOpener" />
+        <div class="col-md-6">
+            <!--<h3> Остаток на складе</h3>-->
+            <div class="well">
+                <div class="">
+                    <div class="">
+                        <!--<label class="btn btn-default">
+                            Browse <input type="file" style="display: none;" id="fileOpenerStockOnHand" />
+                        </label>-->
+
+                        <h4>Остаток на складе</h4>
+                        <div class="input-group">
+                            <label class="input-group-btn">
+                                <span class="btn btn-dark">
+                                    Browse&hellip; <input type="file" style="display: none;" multiple id="fileOpenerStockOnHand">
+                                </span>
+                            </label>
+                            <input type="text" class="form-control" id="fileOpenerStockOnHandInp" readonly>                           
+                        </div>
+                        
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <span>
-                        <button class="btn btn-default" ng-click="vm.setAdditionalBtns()">{{vm.showAdditionalBtnsStatus}} additional btns</button>
-                    </span>
-                    <span ng-show="vm.showAdditionalBtns == true">
-                        <button class="btn btn-default" id="checkData">Check</button>
-                        <button class="btn btn-default" id="getJsonData">get Json data</button>
-                        <button class="btn btn-default" id="getDataByDate">Data by Date</button>
-                    </span>
+                <div style="margin-top:10px">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-danger progress-bar-striped active" role="progressbar"
+                             ng-class="{ 'progress-bar-danger': vm.progressSoH < 50, 'progress-bar-warning': vm.progressSoH > 49 && vm.progressSoH < 100, 'progress-bar-success': vm.progressSoH == 100 }"
+                             aria-valuenow="{{vm.progressSoH}}" aria-valuemin="0" aria-valuemax="100"
+                             style="min-width: 2em; width:{{vm.progressSoH + '%'}}" async>
+                            <span class="sr-only">{{vm.progressSoH + '% Complete'}}</span>
+                            {{vm.progressSoH + '%'}}
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4>Всего в наличии: {{vm.totalStockQty}}</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <!--<h3> Продажи по вариантам</h3>-->
+            <div class="well">
+                <div class="">
+                    <div class="">
+                        <!--<input type="file" id="fileOpenerVariantSales" />-->
+
+                        <h4>Продажи по вариантам</h4>
+                        <div class="input-group">
+                            <label class="input-group-btn">
+                                <span class="btn btn-dark" ng-disabled="!vm.isParseSoHComplete">
+                                    Browse&hellip; <input type="file" style="display: none;" multiple id="fileOpenerVariantSales" ng-disabled="!vm.isParseSoHComplete">
+                                </span>
+                            </label>
+                            <input type="text" class="form-control" id="fileOpenerVariantSalesInp" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:10px">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-danger progress-bar-striped active" role="progressbar"
+                             ng-class="{ 'progress-bar-danger': vm.progressVS < 50, 'progress-bar-warning': vm.progressVS > 49 && vm.progressVS < 100, 'progress-bar-success': vm.progressVS == 100 }"
+                             aria-valuenow="{{vm.progressVS}}" aria-valuemin="0" aria-valuemax="100"
+                             style="min-width: 2em; width:{{vm.progressVS + '%'}}" async>
+                            <span class="sr-only">{{vm.progressVS + '% Complete'}}</span>
+                            {{vm.progressSVS + '%'}}
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4>Всего продано: {{vm.totalSalesQty}}</h4>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <div>
+        <h1>Импорт данных для аналитики истории продаж</h1>
+        <div class="well">
+            <div>
+                <h4>История продаж</h4>
+                <div class="input-group">
+                    <label class="input-group-btn">
+                        <span class="btn btn-dark">
+                            Browse&hellip; <input type="file" style="display: none;" multiple id="fileOpener">
+                        </span>
+                    </label>
+                    <input type="text" class="form-control" id="fileOpenerInp" readonly>
                 </div>
             </div>
 
@@ -38,62 +111,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <h3 class="text-center"> Остаток на складе</h3>
-        <div class="well">
-            <div class="row">
-                <div class="col-md-6">
-                    <input type="file" id="fileOpenerStockOnHand" />
-                </div>                
-            </div>
-            <div style="margin-top:10px">
-                <div class="progress">
-                    <div class="progress-bar progress-bar-danger progress-bar-striped active" role="progressbar"
-                         ng-class="{ 'progress-bar-danger': vm.progressSoH < 50, 'progress-bar-warning': vm.progressSoH > 49 && vm.progressSoH < 100, 'progress-bar-success': vm.progressSoH == 100 }"
-                         aria-valuenow="{{vm.progressSoH}}" aria-valuemin="0" aria-valuemax="100"
-                         style="min-width: 2em; width:{{vm.progressSoH + '%'}}" async>
-                        <span class="sr-only">{{vm.progressSoH + '% Complete'}}</span>
-                        {{vm.progressSoH + '%'}}
-                    </div>
-                </div>
-            </div>
-            <div class="row" ng-show="vm.isParseSoHComplete">
-                <div class="text-center">
-                    <button class="btn btn-success" ui-sref='model'>go models!</button>
-                    <button class="btn btn-success" ui-sref='sizes'>go sizes!</button>
-                    <button class="btn btn-success" ui-sref='colors'>go colors!</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <h3 class="text-center"> Продажи по вариантам</h3>
-        <div class="well">
-            <div class="row">
-                <div class="col-md-6">
-                    <input type="file" id="fileOpenerVariantSales" />
-                </div>
-            </div>
-            <div style="margin-top:10px">
-                <div class="progress">
-                    <div class="progress-bar progress-bar-danger progress-bar-striped active" role="progressbar"
-                         ng-class="{ 'progress-bar-danger': vm.progressVS < 50, 'progress-bar-warning': vm.progressVS > 49 && vm.progressVS < 100, 'progress-bar-success': vm.progressVS == 100 }"
-                         aria-valuenow="{{vm.progressVS}}" aria-valuemin="0" aria-valuemax="100"
-                         style="min-width: 2em; width:{{vm.progressVS + '%'}}" async>
-                        <span class="sr-only">{{vm.progressVS + '% Complete'}}</span>
-                        {{vm.progressSVS + '%'}}
-                    </div>
-                </div>
-            </div>
-            <div class="row" ng-show="vm.isParseVSComplete">
-                <div class="text-center">
-                    <button class="btn btn-success" ui-sref='model'>go stock on hand!</button>
-                    <button class="btn btn-success" ui-sref='sizes'>go sales!</button>
-                    <button class="btn btn-success" ui-sref='colors'>go print!</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    
     <form action="#" class="dropzone dz-clickable" id="uberForm" ng-show="false">
         <div class="dz-default dz-message">
             <span>

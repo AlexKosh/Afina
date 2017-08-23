@@ -27,6 +27,13 @@ angular.module('Afina').directive('colorsPage', function () {
     }
 });
 
+angular.module('Afina').directive('pos', function () {
+    return {
+        restrict: 'EA',
+        templateUrl: 'client/partials/pos.html'
+    }
+});
+
 angular.module('Afina').directive('tablesPage', function () {
     return {
         restrict: 'EA',

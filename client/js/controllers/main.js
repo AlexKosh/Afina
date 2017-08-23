@@ -20,6 +20,8 @@ function MainController($scope){
     vm.isParseComplete = false;
     vm.isParseSoHComplete = false;
     vm.isParseVSComplete = false;
+    vm.totalStockQty = 0;
+    vm.totalSalesQty = 0;
     
     //после удачного парсинга файла и последующей удачной обработки, данные помещаются сюда, а пока это false
     vm.exportData = false;
@@ -129,30 +131,49 @@ function MainController($scope){
             });
     };
     function tryParseSoHFile() {
-        var file = document.getElementById("fileOpenerStockOnHand").files[0];
+        var file = document.getElementById("fileOpenerStockOnHand").files[0];        
 
         setSoHProgress(0);
 
         Papa.parse(file, {
             complete: function (results) {
 
+                setSoHProgress(11);
+
                 //array of csv data
                 var roughData = results.data;
                 //console.log(results.data);
+
+                var validation = true;
 
                 //array == ["Product", "Variant", "SKU", "In Stock", "Cost Price"]
                 var propertiesNames = roughData[0];
                 //console.log(propertiesNames);
 
+                setSoHProgress(27);
+
                 var jsonData = [];
                 jsonData = getJsonDataSoH(roughData);
                 //console.log(jsonData);
-                setSoHProgress(50);
+
+                if (validation) {
+                    setSoHProgress(56);    
+                } else {
+                    console.log("crit error in validation 56%");
+                    return;
+                }
 
                 var structuredData = [];
                 $scope.structuredDataSoH = vm.structuredDataSoH = structuredData = getStructuredData(jsonData);
                 //console.log(structuredData);
-                setSoHProgress(100);
+
+                if (validation) {
+                    setSoHProgress(100);
+                } else {
+                    console.log("crit error in validation 100%");
+                    return;
+                }
+
 
                 //this method transforms array data to json data
                 function getJsonDataSoH(arr) {
@@ -161,6 +182,8 @@ function MainController($scope){
                     var resultArr = [];
                     var tempObj = new Object();
                     var iterator = 0;
+                    var totalStock = 0;
+                    var validPts = 0;
 
                     for (var i = 1; i < arr.length - 1; i++) {
 
@@ -170,36 +193,62 @@ function MainController($scope){
                         for (var p of propertiesNames) {
 
                             if (p == "Variant") {
+
                                 getColorAndSize(tempObj, arr[i][iterator]);
+                                validPts < 1 ? validPts = 1 : null;
+
                             } else {
                                 if (p == "In Stock") {
+
                                     //getInStock(tempObj, arr[i][iterator]);
                                     tempObj.InStock = parseInt(arr[i][iterator]);
+                                    validPts < 2 ? validPts = 2 : null;
+
                                 } else {
+
                                     tempObj[p] = arr[i][iterator];
+
                                 }
                             }
                             iterator++;
+
+                            if (p == "Stock on Hand" || p == "Sales Volume") {
+                                validation = false;
+                                return;
+                            }
                         }
                         tempObj.Sold = 0;
-
+                        totalStock += tempObj.InStock;
+                        
                         resultArr.push(tempObj);
                     }
 
-                    return resultArr;
+                    if (validPts == 2) {
+                        vm.totalStockQty = totalStock;
+                        validation = true;
+                        //console.log(resultArr);
+                        return resultArr;
+                    } else {
+                        validation = false;
+                        console.log("crit error in getJsonDataSoH() validPts");
+                        return null;
+                    }
+                    
 
                     function getColorAndSize(tObject, val) {
                         var colorDashSize = val;
                         var dashIndex = 0;
+                        var spaceIndex = 0;
 
                         for (var i = 0; i < colorDashSize.length; i++) {
+
                             if (colorDashSize[i] == '/') {
                                 dashIndex = i;
                                 break;
                             }
                         }
 
-                        tObject.Color = colorDashSize.slice(0, dashIndex);
+                        tObject.Color = colorDashSize.slice(spaceIndex, dashIndex);
                         tObject.Size = colorDashSize.slice(dashIndex + 1);
                     }
                     function getInStock(tObject, val) {
@@ -254,8 +303,13 @@ function MainController($scope){
         Papa.parse(file, {
             complete: function (results) {
 
+                setVSProgress(11);
+
                 //array of csv data
                 var roughData = results.data;
+
+                var validation = false;
+                setVSProgress(27);
 
                 //array == ["Product", "Variant", "SKU", "In Stock", "Cost Price"]
                 var propertiesNames = roughData[0];
@@ -264,15 +318,29 @@ function MainController($scope){
                 var jsonData = [];
                 jsonData = getJsonDataVS(roughData);
                 //console.log(jsonData);
-                setVSProgress(50);
+
+                if (validation) {
+                    setVSProgress(55);
+                } else {
+                    console.log('crit error in validation 55%');
+                    return;
+                }
+                
                 //console.log('-----------------------------------------------');
                 for (var x = 0; x < jsonData.length; x++) {
                     fillStructuredData(vm.structuredDataSoH, jsonData[x]);
                 }
                 //console.log('-----------------------------------------------');
-                setVSProgress(100);
-                $scope.haveSalesData = true;
-                //console.log(vm.structuredDataSoH);
+
+                if (validation) {
+                    setVSProgress(100);
+                    $scope.haveSalesData = true;
+                    //console.log(vm.structuredDataSoH);
+                } else {
+                    console.log('crit error in validation 100%');
+                    return;
+                }
+                
 
                 function getJsonDataVS(arr) {
 
@@ -291,6 +359,7 @@ function MainController($scope){
                             if (p == "Sales Volume") {
                                 //getInStock(tempObj, arr[i][iterator]);
                                 tempObj.Sold = parseInt(arr[i][iterator]);
+                                validation = true;
                             } else {
                                 tempObj[p] = arr[i][iterator];
                             }
@@ -302,19 +371,22 @@ function MainController($scope){
 
                     return resultArr;                                        
                 }
-                function fillStructuredData(arr, d) {     
-                    
+                function fillStructuredData(arr, d) {
+
                     for (var i = 0; i < arr.length; i++) {
                         for (var j = 0; j < arr[i].length; j++) {
                             for (var k = 0; k < arr[i][j].length; k++) {                               
 
                                 if (d.SKU == arr[i][j][k].SKU) {
                                     arr[i][j][k].Sold = d.Sold;
+
+                                    vm.totalSalesQty += d.Sold;
                                     return;
                                 }
                             }
                         }
                     }
+                    validation = false;
                     console.log('error in fillStructuredData()');
                 }
             }
@@ -491,6 +563,7 @@ function MainController($scope){
                 tempDate = dates.start;*/
             }
         }
+        console.log("getDataByDate() после заполнения массива датами");
         console.log(result);
         function getWeeksArray(d, n) {
 
@@ -531,8 +604,8 @@ function MainController($scope){
                     });
                 }
 
-                if (weekNo > 55) {
-                    console.log('error: quantity of weeks is bigger than 55!');
+                if (weekNo > 276) {
+                    console.log('error: quantity of weeks is bigger than 276!');
                     break;
                 }
 
@@ -776,10 +849,35 @@ function MainController($scope){
             vm.showAdditionalBtnsStatus = 'Hide';
         }
     }
+    
+    $(document).ready(function () {
+        $('#soho').change(function () {
+            console.log('soho');
+                        
+            var input = $('#soho'),
+            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            console.log(label);
+
+            var inputSec = $('#sohoSec');
+            inputSec.val(label);
+
+            setSoHProgress(0);
+            tryParseSoHFile();
+
+        });
+    });   
+    
 
     $(document).ready(function () {
         $('#fileOpener').change(function () {
             console.log('inputs content have changed');
+
+            var input = $('#fileOpener'),
+            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            //console.log(label);
+
+            var inputSec = $('#fileOpenerInp');
+            inputSec.val(label);
 
             setProgress(0);
             tryParseFile();            
@@ -790,6 +888,13 @@ function MainController($scope){
         $('#fileOpenerStockOnHand').change(function () {
             console.log('inputs SoH content have changed');
 
+            var input = $('#fileOpenerStockOnHand'),
+            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            //console.log(label);
+
+            var inputSec = $('#fileOpenerStockOnHandInp');
+            inputSec.val(label);
+
             setSoHProgress(0);
             tryParseSoHFile();
         });
@@ -798,6 +903,13 @@ function MainController($scope){
     $(document).ready(function () {
         $('#fileOpenerVariantSales').change(function () {
             console.log('inputs VS content have changed');
+
+            var input = $('#fileOpenerVariantSales'),
+            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            //console.log(label);
+
+            var inputSec = $('#fileOpenerVariantSalesInp');
+            inputSec.val(label);
 
             setVSProgress(0);
             tryParseVSFile();
