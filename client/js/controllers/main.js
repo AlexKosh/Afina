@@ -9,7 +9,7 @@ function MainController($scope){
     //view model
     var vm = this;
     console.log('initialized main ctrl');
-
+    
     //переменная для прогресс-бара
     vm.progress = 0;
     vm.progressSoH = 0;
@@ -406,9 +406,9 @@ function MainController($scope){
         //в csv файле по шаблону TradeGecko Exportera больше 20 колонок, эта функция отделяет зерна от плевел
         function selectTargetColumns() {
             //массив нужных названий колонок, в дальнейшем этот массив сопоставляется с названием каждой колонки в файле
-            var targetColumns = ['Variant SKU', 'Item Product', 'Item Name', 'Item Quantity', 'Shipment Date'];
+            var targetColumns = ['Order Number', 'Variant SKU', 'Item Product', 'Item Name', 'Item Quantity', 'Shipment Date', 'Company Name', 'Item SKU', 'Due At'];
             //массив названий колонок из csv файла
-            var header = vm.roughData[0];
+            var header = vm.roughData[0];            
 
             var indexes = getHeaderIndexes(targetColumns);
             //$scope.$apply(function () {
@@ -439,6 +439,7 @@ function MainController($scope){
                         break;
                     }
                 }
+                //console.log(indexes);
                 return indexes;
             }
             /*функция принимает vm.roughData как необработанный массив данных, отделяет от него только нужные колонки
@@ -447,32 +448,34 @@ function MainController($scope){
                 var objects = [];
                 var tempObject = new Object();
                 var newObject = new Object();
-
+                console.log(arr.length);
                 for (var i = 1; i < arr.length; i++) {
                     tempObject = new Object();
                     newObject = new Object();
 
-                    if (arr[i][indexes[0]] == undefined) {
+                    if (arr[i][indexes[1]] == undefined) {
                         break;
                     }
-
+                    
                     for (var j = 0; j < indexes.length; j++) {
 
                         tempObject[arr[0][indexes[j]]] = arr[i][indexes[j]];
                     }
 
-                    if (tempObject[targetColumns[1]] == '') {
-                        console.log('error: tempObject[targetColumns[1]] == \'\'');
+                    if (tempObject[targetColumns[2]] == '') {
+                        console.log('error: tempObject[targetColumns[2]] == \'\'');
                         continue;
                     }
 
-                    newObject.Name = tempObject[targetColumns[1]];
-                    newObject.SKU = tempObject[targetColumns[0]];
-                    newObject.Quantity = parseInt(tempObject[targetColumns[3]]);
-                    newObject.Date = new Date(tempObject[targetColumns[4]]).setHours(12) || tempObject[targetColumns[4]];
+                    newObject.OrderNumber = tempObject[targetColumns[0]];
+                    newObject.SKU = tempObject[targetColumns[1]] || tempObject[targetColumns[7]];
+                    newObject.Name = tempObject[targetColumns[2]];                    
+                    newObject.Quantity = parseInt(tempObject[targetColumns[4]]);
+                    newObject.Date = new Date(tempObject[targetColumns[5]]).setHours(12) || tempObject[targetColumns[5] || tempObject[targetColumns[8]]];
+                    newObject.Customer = tempObject[targetColumns[6]];
 
                     function getColorAndSize() {
-                        var colorDashSize = tempObject[targetColumns[2]];
+                        var colorDashSize = tempObject[targetColumns[3]];
                         var dashIndex = 0;
 
                         for (var i = 0; i < colorDashSize.length; i++) {
@@ -485,7 +488,7 @@ function MainController($scope){
                         newObject.Color = colorDashSize.slice(0, dashIndex);
                         newObject.Size = colorDashSize.slice(dashIndex + 1);
                     }
-
+                    
                     getColorAndSize();
 
                     objects.push(newObject);
@@ -563,8 +566,8 @@ function MainController($scope){
                 tempDate = dates.start;*/
             }
         }
-        console.log("getDataByDate() после заполнения массива датами");
-        console.log(result);
+        //console.log("getDataByDate() после заполнения массива датами");
+        //console.log(result);
         function getWeeksArray(d, n) {
 
 
@@ -632,9 +635,9 @@ function MainController($scope){
         vm.dataByDate = result;
         $scope.dataByDate = result;
         //console.log(result);
-        console.log(count);
-        console.log('Data by Date:');
-        console.log(result);
+        //console.log(count);
+        //console.log('Data by Date:');
+        //console.log(result);
              
         setProgress(100);        
 

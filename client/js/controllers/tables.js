@@ -19,6 +19,8 @@
         vm.viewArr = [];
         vm.viewArrSum = [];
         
+        vm.getRatio = getRatio;
+
         init();        
 
         vm.showModel = function (m, arr, index) {
@@ -113,7 +115,11 @@
                 string += str + '\n';
                 needMain = true;
             }
-        }        
+        }
+
+        function getRatio(a,b) {
+            return parseFloat((a / b).toFixed(1));
+        }
     }
 
 })();

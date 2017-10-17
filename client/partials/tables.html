@@ -79,6 +79,39 @@
                     </tr>
                 </tfoot>
             </table>
+
+            <h2 class="text-left">CООТНОШЕНИЕ ПРОДАЖ К ОСТАТКУ</h2>
+            <table class="table table-bordered table-condensed">
+                <thead class="table-head">
+                    <tr>
+                        <th>{{model[0][0].Product}}</th>
+                        <th ng-repeat="size in model[0]">{{size.Size}}</th>
+                        <th>Сумма</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="color in model track by $index">
+                        <th>{{color[0].Color}}</th>
+                        <td ng-repeat="j in color track by j.SKU">
+                            <span>
+                                <span>{{vm.getRatio(j.InStock, j.Sold)}}</span>
+                            </span>
+                        </td>
+                        <th>
+                            {{vm.getRatio(vm.viewArrSum[model[0][0].Product][color[0].Color].SoH, vm.viewArrSum[model[0][0].Product][color[0].Color].Sold)}}
+                        </th>
+                    </tr>
+                </tbody>
+                <tfoot class="table-foot">
+                    <tr>
+                        <th>сумма, по размерам:</th>
+                        <th ng-repeat="j in model[0] track by j.SKU"> {{vm.getRatio(vm.viewArrSum[model[0][0].Product][j.Size].SoH, vm.viewArrSum[model[0][0].Product][j.Size].Sold)}} </th>
+                        <th>
+                            {{vm.getRatio(vm.viewArrSum[model[0][0].Product].SoHSum, vm.viewArrSum[model[0][0].Product].SoldSum)}}
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
 
         

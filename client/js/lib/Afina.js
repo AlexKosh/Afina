@@ -14,14 +14,19 @@ angular.module('Afina').config(function ($urlRouterProvider, $stateProvider, $lo
           url: '/model',
           template: '<model-page></model-page>'
       })
-    .state('sizes', {
+        .state('sizes', {
         url: '/sizes',
         template: '<sizes-page></sizes-page>'
-    })
-    .state('colors', {
+        })
+        .state('colors', {
         url: '/colors',
         template: '<colors-page></colors-page>'
-    }).state('pos', {
+        })
+        .state('orders-by-models', {
+        url: '/orders-by-models',
+        template: '<orders-by-models></orders-by-models>'
+    })
+        .state('pos', {
         url: '/pos',
         template: '<pos></pos>'
     })
